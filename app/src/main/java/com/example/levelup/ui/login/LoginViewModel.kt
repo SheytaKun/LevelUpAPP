@@ -13,13 +13,16 @@ class LoginViewModel(
         private set
 
     private fun isDuocMail(email: String) =
-        email.endsWith("@duoc.cl", true) || email.endsWith("@profesor.duoc.cl", true)
+        //email.endsWith("@duoc.cl", true) || email.endsWith("@profesor.duoc.cl", true)
+        email.endsWith("@duoc.cl", true)
 
     private fun isEmailValid(email: String) =
         Regex("^[\\w.+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
 
-    fun onUsernameChange(v: String) { uiState.value = uiState.value.copy(username = v, error = null) }
-    fun onPasswordChange(v: String) { uiState.value = uiState.value.copy(password = v, error = null) }
+    fun onUsernameChange(v: String) {
+        uiState.value = uiState.value.copy(username = v, error = null) }
+    fun onPasswordChange(v: String) {
+        uiState.value = uiState.value.copy(password = v, error = null) }
 
     fun submit(onSuccess: (email: String, isDuoc: Boolean) -> Unit) {
         val email = uiState.value.username.trim().lowercase()

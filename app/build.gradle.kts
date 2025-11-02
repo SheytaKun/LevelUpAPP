@@ -54,10 +54,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("com.google.android.gms:play-services-base:18.5.0")
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
-
-
     // Dependencia para la navegación con Jetpack Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
@@ -67,9 +63,10 @@ dependencies {
 
     // Dependencias Room
     implementation("androidx.room:room-runtime:2.6.1")
-    implementation(libs.androidx.ui.text.google.fonts)  // Versión actualizada
-    kapt("androidx.room:room-compiler:2.6.1")          // Misma versión
-    implementation("androidx.room:room-ktx:2.6.1")     // Misma versión
+    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.compose.foundation)
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
