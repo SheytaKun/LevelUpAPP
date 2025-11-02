@@ -7,6 +7,6 @@ class AuthRepository (
     private val validCredential: Credential = Credential.Admin
 ){
     fun logi(username:String, passoword: String): Boolean{
-        return username ==validCredential.username &&passoword == validCredential.password
+        return username ==validCredential.username && passoword == validCredential.password
     }
 }
