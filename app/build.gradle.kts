@@ -53,7 +53,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation("com.google.android.gms:play-services-base:18.5.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
+
 
     // Dependencia para la navegación con Jetpack Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")

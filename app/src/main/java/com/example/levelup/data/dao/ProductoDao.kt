@@ -1,4 +1,4 @@
-package com.example.levelup.dao
+package com.example.levelup.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -1,6 +1,6 @@
 package com.example.levelup.data.repository
 
-import com.example.levelup.dao.ProductoDao
+import com.example.levelup.data.dao.ProductoDao
 import com.example.levelup.data.model.Producto
 import kotlinx.coroutines.flow.Flow
 
