@@ -9,11 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.compose.rememberNavController
+import com.example.levelup.ui.catalog.CatalogScreen
+import com.example.levelup.ui.product.ProductDetailScreen
+import com.example.levelup.view.DrawerMenu
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.register.RegisterScreen
-import com.example.levelup.view.DrawerMenu
-// 🔹 Descomenta cuando tengas la vista real de registro
-// import com.example.levelup.ui.register.RegisterScreen
+import com.example.levelup.view.ProductoFormScreen
 
 @Composable
 fun AppNav(navController: NavHostController) {
@@ -31,6 +33,7 @@ fun AppNav(navController: NavHostController) {
     val blog     = "blog"
     val events   = "events"
     val register = "register"
+    val productForm = "producto_form/{nombre}/{precio}"
     val forgot   = "forgot"
 
     NavHost(navController = navController, startDestination = login) {
@@ -58,7 +61,7 @@ fun AppNav(navController: NavHostController) {
             )
         ) { bs ->
             val categoria = bs.arguments?.getString("categoria")
-            Text("Catálogo: ${categoria ?: "todas"}")
+            CatalogScreen(navController = navController, categoria = categoria)
         }
 
         composable(
@@ -66,7 +69,19 @@ fun AppNav(navController: NavHostController) {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { bs ->
             val id = bs.arguments?.getString("id").orEmpty()
-            Text("Producto $id")
+            // en nuestro caso usamos \"id\" como el código del producto (ej. JM001)
+            ProductDetailScreen(navController = navController, codigo = Uri.decode(id))
+        }
+
+        composable(route = productForm,
+            arguments = listOf(
+                navArgument("nombre") { type = NavType.StringType },
+                navArgument("precio") { type = NavType.StringType }
+            )
+        ) { bs ->
+            val nombre = Uri.decode(bs.arguments?.getString("nombre").orEmpty())
+            val precio = bs.arguments?.getString("precio").orEmpty()
+            ProductoFormScreen(navController = navController, nombre = nombre, precio = precio)
         }
 
         composable(cart)    { Text("Carrito") }
@@ -74,13 +89,10 @@ fun AppNav(navController: NavHostController) {
         composable(blog)    { Text("Blog") }
         composable(events)  { Text("Eventos") }
 
-        // Opción A: usar tu RegisterScreen real (recomendada)
-
         composable(register) {
             RegisterScreen(
                 nav = navController,
                 onDone = { email ->
-                    // al completar registro, entra al Drawer con el email
                     navController.navigate("drawer/${Uri.encode(email)}") {
                         popUpTo(login) { inclusive = true }
                         launchSingleTop = true
@@ -89,15 +101,6 @@ fun AppNav(navController: NavHostController) {
             )
         }
 
-
-//        // Opción B: placeholder temporal (quítalo cuando tengas la vista real)
-//        composable(register) {
-//            Text("Pantalla de Registro (WIP)")
-//        }
-
-        // (opcional) Recuperar contraseña
-        composable(forgot) {
-            Text("Recuperar contraseña (WIP)")
-        }
+        // otros destinos...
     }
 }
