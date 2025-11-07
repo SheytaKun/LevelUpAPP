@@ -13,7 +13,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val nav: NavHostController = rememberNavController()
 
-            // LOG: identidad del NavController raíz
             androidx.compose.runtime.LaunchedEffect(nav) {
                 android.util.Log.d("NAV", "MainActivity nav=${System.identityHashCode(nav)}")
             }

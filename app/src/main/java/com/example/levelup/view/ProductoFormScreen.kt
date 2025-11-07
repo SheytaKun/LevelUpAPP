@@ -48,10 +48,6 @@ class CarritoViewModel : ViewModel() {
     fun limpiar() { _items.value = emptyList() }
 }
 
-/* =========================
-   UI: PRODUCTO FORM SCREEN
-   ========================= */
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductoFormScreen(

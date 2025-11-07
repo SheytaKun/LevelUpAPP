@@ -106,7 +106,6 @@ fun MuestraDatosScreen(
 
             Spacer(Modifier.weight(1f))
 
-            // Cerrar sesión → volver a login limpiando el back stack
             Button(
                 onClick = {
                     navController.navigate("login") {

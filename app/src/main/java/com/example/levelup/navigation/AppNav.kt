@@ -10,17 +10,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.levelup.ui.login.LoginScreen
+import com.example.levelup.ui.register.RegisterScreen
 import com.example.levelup.view.DrawerMenu
+// 🔹 Descomenta cuando tengas la vista real de registro
+// import com.example.levelup.ui.register.RegisterScreen
 
 @Composable
 fun AppNav(navController: NavHostController) {
 
-    // LOG: debe ser IGUAL al de MainActivity
     LaunchedEffect(navController) {
-        android.util.Log.d("NAV", "AppNav      nav=${System.identityHashCode(navController)}")
+        android.util.Log.d("NAV", "AppNav nav=${System.identityHashCode(navController)}")
     }
 
-    // Rutas inline
     val login    = "login"
     val drawer   = "drawer/{username}"
     val catalogo = "catalogo?categoria={categoria}"
@@ -29,6 +30,8 @@ fun AppNav(navController: NavHostController) {
     val profile  = "profile"
     val blog     = "blog"
     val events   = "events"
+    val register = "register"
+    val forgot   = "forgot"
 
     NavHost(navController = navController, startDestination = login) {
 
@@ -70,5 +73,31 @@ fun AppNav(navController: NavHostController) {
         composable(profile) { Text("Perfil") }
         composable(blog)    { Text("Blog") }
         composable(events)  { Text("Eventos") }
+
+        // Opción A: usar tu RegisterScreen real (recomendada)
+
+        composable(register) {
+            RegisterScreen(
+                nav = navController,
+                onDone = { email ->
+                    // al completar registro, entra al Drawer con el email
+                    navController.navigate("drawer/${Uri.encode(email)}") {
+                        popUpTo(login) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+
+//        // Opción B: placeholder temporal (quítalo cuando tengas la vista real)
+//        composable(register) {
+//            Text("Pantalla de Registro (WIP)")
+//        }
+
+        // (opcional) Recuperar contraseña
+        composable(forgot) {
+            Text("Recuperar contraseña (WIP)")
+        }
     }
 }

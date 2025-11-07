@@ -27,14 +27,13 @@ fun DrawerMenu(
 ) {
     val ctx = LocalContext.current
 
-    // LOG: debería coincidir con el hash que ves en AppNav/LoginScreen
     LaunchedEffect(navController) {
         android.util.Log.d("NAV", "DrawerMenu  nav=${System.identityHashCode(navController)}")
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        // Header
+        // Header con íconos arriba a la derecha
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -42,6 +41,30 @@ fun DrawerMenu(
                 .background(MaterialTheme.colorScheme.primary)
                 .padding(16.dp)
         ) {
+            // Íconos (perfil + carrito)
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                IconButton(onClick = { navController.navigate("cart") }) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "Carrito",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                IconButton(onClick = { navController.navigate("profile") }) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Perfil",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+
+            // Títulos y chip abajo a la izquierda
             Column(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.Start,
@@ -72,9 +95,8 @@ fun DrawerMenu(
             }
         }
 
-        // Items
+        // Items del Drawer
         LazyColumn(modifier = Modifier.weight(1f)) {
-
             item { SectionLabel("Catálogo") }
             item { DrawerItem("Juegos de Mesa", Icons.Default.SportsEsports) {
                 navController.navigate("catalogo?categoria=${Uri.encode("Juegos de Mesa")}") { launchSingleTop = true }
@@ -112,14 +134,6 @@ fun DrawerMenu(
                 navController.navigate("events")
             } }
 
-            item { SectionLabel("Cuenta") }
-            item { DrawerItem("Carrito", Icons.Default.ShoppingCart) {
-                navController.navigate("cart")
-            } }
-            item { DrawerItem("Perfil", Icons.Default.Person) {
-                navController.navigate("profile")
-            } }
-
             item {
                 DrawerItem("Soporte WhatsApp", Icons.Default.SupportAgent) {
                     val text = "Hola, necesito soporte con mi pedido en Level-Up Gamer."
@@ -149,6 +163,7 @@ fun DrawerMenu(
         )
     }
 }
+
 
 @Composable
 private fun SectionLabel(text: String) {

@@ -9,4 +9,7 @@ class AuthRepository (
     fun login(username:String, passoword: String): Boolean{
         return username ==validCredential.username && passoword == validCredential.password
     }
+    fun register(email: String, pass: String): Boolean {
+        return true
+    }
 }

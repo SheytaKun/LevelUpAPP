@@ -31,7 +31,6 @@ fun LoginScreen(
     val state = vm.uiState.value
     var showPass by remember { mutableStateOf(false) }
 
-    // LOG: debería coincidir con AppNav/DrawerMenu
     LaunchedEffect(navController) {
         android.util.Log.d("NAV", "LoginScreen nav=${System.identityHashCode(navController)}")
     }
@@ -123,13 +122,6 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
-                // BOTÓN DE PRUEBA (simple, sin argumentos): debe funcionar sí o sí
-                Button(
-                    onClick = { navController.navigate("cart") },
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                ) {
-                    Text("Probar → cart")
-                }
 
                 Spacer(Modifier.height(12.dp))
 
@@ -155,14 +147,13 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    TextButton(onClick = { /* navController.navigate("forgot") */ }) {
+                    TextButton(onClick = { navController.navigate("forgot") }) {
                         Text("¿Olvidaste tu contraseña?")
                     }
-                    TextButton(onClick = { /* navController.navigate("register") */ }) {
+                    TextButton(onClick = { navController.navigate("register") }) {
                         Text("Crear cuenta")
                     }
                 }
-
                 Spacer(Modifier.height(20.dp))
             }
         }
