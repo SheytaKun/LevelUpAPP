@@ -1,34 +1,28 @@
 package com.example.levelup.ui.home
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.levelup.navigation.Routes
-import com.example.levelup.navigation.navToCategory
-import com.example.levelup.navigation.navToDrawer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MuestraDatosScreen(
     username: String,
-    navController: NavHostController   // 👈 aquí el cambio
+    navController: NavHostController
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Level-Up Gamer") },
                 actions = {
-                    IconButton(onClick = { navController.navigate(Routes.Cart) }) {
+                    IconButton(onClick = { navController.navigate("cart") }) {
                         Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito")
                     }
                 }
@@ -53,8 +47,15 @@ fun MuestraDatosScreen(
                 style = MaterialTheme.typography.bodyMedium
             )
 
+            // Abrir Drawer (tu pantalla tipo menú)
             ElevatedButton(
-                onClick = { navToDrawer(navController, username) },
+                onClick = {
+                    navController.navigate("drawer/${Uri.encode(username)}") {
+                        // si quieres quitar login del back stack:
+                        // popUpTo("login") { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.Menu, contentDescription = null)
@@ -62,8 +63,11 @@ fun MuestraDatosScreen(
                 Text("Abrir menú (Drawer)")
             }
 
+            // Ir al catálogo (todas las categorías)
             ElevatedButton(
-                onClick = { navToCategory(navController, null) },  // ✅ ahora compila
+                onClick = {
+                    navController.navigate("catalogo?categoria=") { launchSingleTop = true }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Ver catálogo")
@@ -74,7 +78,7 @@ fun MuestraDatosScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { navController.navigate(Routes.Profile) },
+                    onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.Person, contentDescription = null)
@@ -82,7 +86,7 @@ fun MuestraDatosScreen(
                     Text("Perfil")
                 }
                 OutlinedButton(
-                    onClick = { navController.navigate(Routes.Blog) },
+                    onClick = { navController.navigate("blog") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.Article, contentDescription = null)
@@ -92,7 +96,7 @@ fun MuestraDatosScreen(
             }
 
             OutlinedButton(
-                onClick = { navController.navigate(Routes.Events) },
+                onClick = { navController.navigate("events") },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.Map, contentDescription = null)
@@ -102,10 +106,11 @@ fun MuestraDatosScreen(
 
             Spacer(Modifier.weight(1f))
 
+            // Cerrar sesión → volver a login limpiando el back stack
             Button(
                 onClick = {
-                    navController.navigate(Routes.Login) {
-                        popUpTo(Routes.Login) { inclusive = true }
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
                         launchSingleTop = true
                     }
                 },

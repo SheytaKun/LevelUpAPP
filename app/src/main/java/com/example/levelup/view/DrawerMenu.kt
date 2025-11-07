@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,17 +17,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import androidx.navigation.NavHostController
 
 @Composable
 fun DrawerMenu(
     username: String,
-    navController: NavController,
+    navController: NavHostController,
     isDuoc: Boolean = false
 ) {
     val ctx = LocalContext.current
+
+    // LOG: debería coincidir con el hash que ves en AppNav/LoginScreen
+    LaunchedEffect(navController) {
+        android.util.Log.d("NAV", "DrawerMenu  nav=${System.identityHashCode(navController)}")
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -71,95 +75,56 @@ fun DrawerMenu(
         // Items
         LazyColumn(modifier = Modifier.weight(1f)) {
 
-            // --- Catálogo (categorías del enunciado) ---
-            item {
-                SectionLabel("Catálogo")
-            }
-            item {
-                DrawerItem(
-                    label = "Juegos de Mesa",
-                    icon = Icons.Default.SportsEsports
-                ) {
-                    navToCategory(navController, "Juegos de Mesa")
-                }
-            }
-            item {
-                DrawerItem("Accesorios", Icons.Default.Headphones) {
-                    navToCategory(navController, "Accesorios")
-                }
-            }
-            item {
-                DrawerItem("Consolas", Icons.Default.VideogameAsset) {
-                    navToCategory(navController, "Consolas")
-                }
-            }
-            item {
-                DrawerItem("Computadores Gamers", Icons.Default.Computer) {
-                    navToCategory(navController, "Computadores Gamers")
-                }
-            }
-            item {
-                DrawerItem("Sillas Gamers", Icons.Default.Chair) {
-                    navToCategory(navController, "Sillas Gamers")
-                }
-            }
-            item {
-                DrawerItem("Mouse", Icons.Default.Mouse) {
-                    navToCategory(navController, "Mouse")
-                }
-            }
-            item {
-                DrawerItem("Mousepad", Icons.Default.ViewComfy) {
-                    navToCategory(navController, "Mousepad")
-                }
-            }
-            item {
-                DrawerItem("Poleras Personalizadas", Icons.Default.Checkroom) {
-                    navToCategory(navController, "Poleras Personalizadas")
-                }
-            }
-            item {
-                DrawerItem("Polerones Gamers Personalizados", Icons.Default.Checkroom) {
-                    navToCategory(navController, "Polerones Gamers Personalizados")
-                }
-            }
+            item { SectionLabel("Catálogo") }
+            item { DrawerItem("Juegos de Mesa", Icons.Default.SportsEsports) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Juegos de Mesa")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Accesorios", Icons.Default.Headphones) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Accesorios")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Consolas", Icons.Default.VideogameAsset) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Consolas")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Computadores Gamers", Icons.Default.Computer) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Computadores Gamers")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Sillas Gamers", Icons.Default.Chair) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Sillas Gamers")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Mouse", Icons.Default.Mouse) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Mouse")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Mousepad", Icons.Default.ViewComfy) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Mousepad")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Poleras Personalizadas", Icons.Default.Checkroom) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Poleras Personalizadas")}") { launchSingleTop = true }
+            } }
+            item { DrawerItem("Polerones Gamers Personalizados", Icons.Default.Checkroom) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Polerones Gamers Personalizados")}") { launchSingleTop = true }
+            } }
 
-            // --- Comunidad / Contenido ---
-            item {
-                SectionLabel("Comunidad")
-            }
-            item {
-                DrawerItem("Blog & Noticias", Icons.Default.Article) {
-                    navController.navigate("blog")
-                }
-            }
-            item {
-                DrawerItem("Eventos (Mapa)", Icons.Default.Map) {
-                    navController.navigate("events")
-                }
-            }
+            item { SectionLabel("Comunidad") }
+            item { DrawerItem("Blog & Noticias", Icons.Default.Article) {
+                navController.navigate("blog")
+            } }
+            item { DrawerItem("Eventos (Mapa)", Icons.Default.Map) {
+                navController.navigate("events")
+            } }
 
-            // --- Cuenta / Soporte ---
-            item {
-                SectionLabel("Cuenta")
-            }
-            item {
-                DrawerItem("Carrito", Icons.Default.ShoppingCart) {
-                    navController.navigate("cart")
-                }
-            }
-            item {
-                DrawerItem("Perfil", Icons.Default.Person) {
-                    navController.navigate("profile")
-                }
-            }
+            item { SectionLabel("Cuenta") }
+            item { DrawerItem("Carrito", Icons.Default.ShoppingCart) {
+                navController.navigate("cart")
+            } }
+            item { DrawerItem("Perfil", Icons.Default.Person) {
+                navController.navigate("profile")
+            } }
+
             item {
                 DrawerItem("Soporte WhatsApp", Icons.Default.SupportAgent) {
                     val text = "Hola, necesito soporte con mi pedido en Level-Up Gamer."
-                    val url = "https://wa.me/56912345678?text=" +
-                            URLEncoder.encode(text, StandardCharsets.UTF_8.toString())
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    ctx.startActivity(intent)
+                    val url = "https://wa.me/56912345678?text=${Uri.encode(text)}"
+                    ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
             }
             item {
@@ -173,7 +138,6 @@ fun DrawerMenu(
             }
         }
 
-        // Footer
         Text(
             text = "© 2025 Level-Up Gamer",
             style = MaterialTheme.typography.bodySmall,
@@ -185,8 +149,6 @@ fun DrawerMenu(
         )
     }
 }
-
-// --- Helpers UI ---
 
 @Composable
 private fun SectionLabel(text: String) {
@@ -213,12 +175,4 @@ private fun DrawerItem(
         icon = { Icon(icon, contentDescription = label) },
         modifier = Modifier.padding(horizontal = 8.dp)
     )
-}
-
-private fun navToCategory(navController: NavController, categoria: String) {
-    val encoded = URLEncoder.encode(categoria, StandardCharsets.UTF_8.toString())
-    // Define tu destino: por ejemplo "catalogo?categoria={categoria}"
-    navController.navigate("catalogo?categoria=$encoded") {
-        launchSingleTop = true
-    }
 }

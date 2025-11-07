@@ -54,8 +54,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    // Dependencia para viewModel
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
     // Dependencia para la navegación con Jetpack Compose
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
 
     // Íconos (core opcional) y EXTENDIDOS (¡este es el clave!)
     implementation("androidx.compose.material:material-icons-core")
@@ -65,6 +68,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 

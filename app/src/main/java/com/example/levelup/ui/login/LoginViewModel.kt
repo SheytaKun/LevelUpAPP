@@ -11,10 +11,9 @@ class LoginViewModel(
 
     var uiState = androidx.compose.runtime.mutableStateOf(LoginUiState())
         private set
-
     private fun isDuocMail(email: String) =
         //email.endsWith("@duoc.cl", true) || email.endsWith("@profesor.duoc.cl", true)
-        email.endsWith("@duoc.cl", true)
+        email.endsWith("admin@duoc.cl", true)
 
     private fun isEmailValid(email: String) =
         Regex("^[\\w.+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
@@ -44,7 +43,7 @@ class LoginViewModel(
 
         viewModelScope.launch {
             try {
-                val ok = repo.logi(email, pass)
+                val ok = repo.login(email, pass)
                 if (ok) {
                     onSuccess(email, isDuocMail(email))
                     uiState.value = LoginUiState()

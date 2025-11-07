@@ -1,51 +1,74 @@
 package com.example.levelup.navigation
 
+import android.net.Uri
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.view.DrawerMenu
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @Composable
-fun AppNav() {
-    val nav = rememberNavController()
+fun AppNav(navController: NavHostController) {
 
-    NavHost(navController = nav, startDestination = Routes.Login) {
-        composable(Routes.Login) { LoginScreen(navController = nav) }
+    // LOG: debe ser IGUAL al de MainActivity
+    LaunchedEffect(navController) {
+        android.util.Log.d("NAV", "AppNav      nav=${System.identityHashCode(navController)}")
+    }
+
+    // Rutas inline
+    val login    = "login"
+    val drawer   = "drawer/{username}"
+    val catalogo = "catalogo?categoria={categoria}"
+    val product  = "product/{id}"
+    val cart     = "cart"
+    val profile  = "profile"
+    val blog     = "blog"
+    val events   = "events"
+
+    NavHost(navController = navController, startDestination = login) {
+
+        composable(login) {
+            LoginScreen(navController = navController)
+        }
 
         composable(
-            route = Routes.DrawerPath,
+            route = drawer,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
-        ) { backStack ->
-            val raw = backStack.arguments?.getString("username").orEmpty()
-            val username = try {
-                URLDecoder.decode(raw, StandardCharsets.UTF_8.toString())
-            } catch (_: Exception) { raw }
-
-            DrawerMenu(username = username, navController = nav)
+        ) { bs ->
+            val username = Uri.decode(bs.arguments?.getString("username").orEmpty())
+            DrawerMenu(username = username, navController = navController)
         }
 
-        // Catálogo, Producto, etc...
         composable(
-            route = Routes.CatalogoPath,
-            arguments = listOf(navArgument("categoria") {
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            })
-        ) { backStack ->
-            val categoria = backStack.arguments?.getString("categoria")
-            androidx.compose.material3.Text("Catálogo: ${categoria ?: "todas"}")
+            route = catalogo,
+            arguments = listOf(
+                navArgument("categoria") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { bs ->
+            val categoria = bs.arguments?.getString("categoria")
+            Text("Catálogo: ${categoria ?: "todas"}")
         }
 
-        composable(Routes.ProductPath, listOf(navArgument("id") { type = NavType.StringType })) {
-            val id = it.arguments?.getString("id").orEmpty()
-            androidx.compose.material3.Text("Producto $id")
+        composable(
+            route = product,
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { bs ->
+            val id = bs.arguments?.getString("id").orEmpty()
+            Text("Producto $id")
         }
+
+        composable(cart)    { Text("Carrito") }
+        composable(profile) { Text("Perfil") }
+        composable(blog)    { Text("Blog") }
+        composable(events)  { Text("Eventos") }
     }
 }

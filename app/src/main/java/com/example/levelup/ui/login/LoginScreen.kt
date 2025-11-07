@@ -1,5 +1,6 @@
 package com.example.levelup.ui.login
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,18 +18,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.levelup.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    navController: NavController,
+    navController: NavHostController,
     vm: LoginViewModel = viewModel()
 ) {
     val state = vm.uiState.value
     var showPass by remember { mutableStateOf(false) }
+
+    // LOG: debería coincidir con AppNav/DrawerMenu
+    LaunchedEffect(navController) {
+        android.util.Log.d("NAV", "LoginScreen nav=${System.identityHashCode(navController)}")
+    }
 
     val levelUpDark = darkColorScheme(
         primary = Color(0xFF1E90FF),
@@ -42,13 +48,8 @@ fun LoginScreen(
     )
 
     MaterialTheme(colorScheme = levelUpDark) {
-
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Level-Up Gamer") }
-                )
-            }
+            topBar = { TopAppBar(title = { Text("Level-Up Gamer") }) }
         ) { inner ->
             Column(
                 modifier = Modifier
@@ -58,12 +59,10 @@ fun LoginScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Spacer(Modifier.height(12.dp))
 
-                // Logo (reemplaza por tu recurso)
                 Image(
-                    painter = painterResource(id = R.drawable.logo), // <-- usa tu logo
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "Logo Level-Up Gamer",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -89,35 +88,30 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
-                // Usuario / correo
                 OutlinedTextField(
-                    value=state.username,
+                    value = state.username,
                     onValueChange = vm::onUsernameChange,
-                    label ={Text("Usuario")},
+                    label = { Text("Usuario") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(0.95f)
                 )
 
                 Spacer(Modifier.height(12.dp))
 
-                // Contraseña (ver/ocultar)
                 OutlinedTextField(
-                    value=state.password,
+                    value = state.password,
                     onValueChange = vm::onPasswordChange,
-                    label ={Text("Contraseña")},
+                    label = { Text("Contraseña") },
                     singleLine = true,
-                    visualTransformation = if(showPass) VisualTransformation.None else PasswordVisualTransformation(),
-
+                    visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         TextButton(onClick = { showPass = !showPass }) {
                             Text(if (showPass) "Ocultar" else "Ver")
                         }
                     },
                     modifier = Modifier.fillMaxWidth(0.95f)
-
                 )
 
-                // Error
                 if (state.error != null) {
                     Spacer(Modifier.height(10.dp))
                     Text(
@@ -129,17 +123,24 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
-                // Botón Login
+                // BOTÓN DE PRUEBA (simple, sin argumentos): debe funcionar sí o sí
+                Button(
+                    onClick = { navController.navigate("cart") },
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                ) {
+                    Text("Probar → cart")
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                // Botón real de login → navega a drawer con argumento
                 Button(
                     onClick = {
-                        // Si tu VM mejorada retorna isDuoc:
                         vm.submit { email, isDuoc ->
-                            navController.navigate("DrawerMenu/$email") {
+                            navController.navigate("drawer/${Uri.encode(email)}") {
                                 popUpTo("login") { inclusive = true }
                                 launchSingleTop = true
                             }
-                            // Si quieres propagar isDuoc a otra ruta:
-                            // navController.navigate("DrawerMenu?email=$email&isDuoc=$isDuoc") { ... }
                         }
                     },
                     enabled = !state.isLoading,
@@ -150,7 +151,6 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                // Acciones secundarias (olvidé mi contraseña / registrarme)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -171,11 +171,8 @@ fun LoginScreen(
 
 @Preview(showBackground = true)
 @Composable
-
 fun LoginScreenPreview() {
-    val navController = rememberNavController()
-
+    val navController = rememberNavController() // SOLO en preview
     val vm: LoginViewModel = viewModel()
-
     LoginScreen(navController = navController, vm = vm)
 }
