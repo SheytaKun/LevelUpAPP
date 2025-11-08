@@ -9,13 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.compose.rememberNavController
 import com.example.levelup.ui.catalog.CatalogScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.view.DrawerMenu
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.register.RegisterScreen
 import com.example.levelup.view.ProductoFormScreen
+import com.example.levelup.ui.profile.ProfileScreen   // ⬅️ IMPORT NUEVO
 
 @Composable
 fun AppNav(navController: NavHostController) {
@@ -69,11 +69,11 @@ fun AppNav(navController: NavHostController) {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { bs ->
             val id = bs.arguments?.getString("id").orEmpty()
-            // en nuestro caso usamos \"id\" como el código del producto (ej. JM001)
             ProductDetailScreen(navController = navController, codigo = Uri.decode(id))
         }
 
-        composable(route = productForm,
+        composable(
+            route = productForm,
             arguments = listOf(
                 navArgument("nombre") { type = NavType.StringType },
                 navArgument("precio") { type = NavType.StringType }
@@ -85,7 +85,14 @@ fun AppNav(navController: NavHostController) {
         }
 
         composable(cart)    { Text("Carrito") }
-        composable(profile) { Text("Perfil") }
+
+        composable(profile) {
+            ProfileScreen(
+                navController = navController,
+                emailFromSession = null
+            )
+        }
+
         composable(blog)    { Text("Blog") }
         composable(events)  { Text("Eventos") }
 
@@ -101,6 +108,5 @@ fun AppNav(navController: NavHostController) {
             )
         }
 
-        // otros destinos...
     }
 }
