@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.levelup.ui.blog.BlogScreen
 import com.example.levelup.ui.catalog.CatalogScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.view.DrawerMenu
@@ -93,7 +94,9 @@ fun AppNav(navController: NavHostController) {
             )
         }
 
-        composable(blog)    { Text("Blog") }
+        composable(blog) {
+            BlogScreen(navController = navController)
+        }
         composable(events)  { Text("Eventos") }
 
         composable(register) {
