@@ -93,7 +93,7 @@ fun MuestraDatosScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Zona central vacía para tu futuro hero/landing
+
         }
     }
 }

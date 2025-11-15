@@ -2,9 +2,12 @@ package com.example.levelup.view
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,12 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.levelup.R
 
 @Composable
 fun DrawerMenu(
@@ -27,167 +35,186 @@ fun DrawerMenu(
 ) {
     val ctx = LocalContext.current
 
-    LaunchedEffect(navController) {
-        android.util.Log.d("NAV", "DrawerMenu  nav=${System.identityHashCode(navController)}")
-    }
+    val primary = Color(0xFF1E90FF)
+    val secondary = Color(0xFF39FF14)
+    val background = Color(0xFF000000)
+    val surface = Color(0xFF18181C)
+    val onPrimary = Color.White
+    val onSurface = Color.White
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(background)
+    ) {
 
-        // Header con íconos arriba a la derecha
+        // 🔵 TOP BAR Gamer
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp)
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(16.dp)
+                .height(60.dp)
+                .background(surface)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            // Íconos (perfil + carrito)
+
+            // Botón menú
+            IconButton(
+                onClick = { /* abrir drawer */ },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(Icons.Default.Menu, contentDescription = null, tint = onSurface)
+            }
+
+            // Nombre gamer
+            Text(
+                text = "LEVEL-UP GAMER",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center),
+                color = secondary
+            )
+
+            // Carrito + perfil
             Row(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.align(Alignment.CenterEnd),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconButton(onClick = { navController.navigate("cart") }) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Carrito",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
+                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = onSurface)
                 }
                 IconButton(onClick = { navController.navigate("profile") }) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Perfil",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
+                    Icon(Icons.Default.Person, contentDescription = null, tint = onSurface)
                 }
             }
+        }
 
-            // Títulos y chip abajo a la izquierda
-            Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.align(Alignment.BottomStart)
-            ) {
+        // Subtítulo
+        Text(
+            text = "ENVÍOS A TODO CHILE",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),
+            textAlign = TextAlign.Center,
+            color = primary,
+            fontWeight = FontWeight.Bold
+        )
+
+        // 🟢 HERO CARD versión gamer
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = surface
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column {
+
+                // Placeholder de imagen
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(Color(0xFF222228)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.dia_mundial_del_lol),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+
                 Text(
-                    text = "Level-Up Gamer",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold
+                    text = "CONJUNTOS A LA MODA",
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center,
+                    color = onSurface,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Text(
-                    text = "Hola, $username",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
-                )
-                if (isDuoc) {
-                    AssistChip(
-                        onClick = { /* no-op */ },
-                        label = { Text("20% OFF DUOC") },
-                        leadingIcon = { Icon(Icons.Default.Verified, contentDescription = null) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            labelColor = Color.Black,
-                            containerColor = Color(0xFF39FF14)
+
+                // "Puntos" gamer
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    listOf(primary, secondary, primary).forEach { color ->
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(color)
                         )
-                    )
-                }
-            }
-        }
-
-        // Items del Drawer
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            item { SectionLabel("Catálogo") }
-            item { DrawerItem("Juegos de Mesa", Icons.Default.SportsEsports) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Juegos de Mesa")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Accesorios", Icons.Default.Headphones) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Accesorios")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Consolas", Icons.Default.VideogameAsset) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Consolas")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Computadores Gamers", Icons.Default.Computer) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Computadores Gamers")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Sillas Gamers", Icons.Default.Chair) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Sillas Gamers")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Mouse", Icons.Default.Mouse) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Mouse")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Mousepad", Icons.Default.ViewComfy) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Mousepad")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Poleras Personalizadas", Icons.Default.Checkroom) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Poleras Personalizadas")}") { launchSingleTop = true }
-            } }
-            item { DrawerItem("Polerones Gamers Personalizados", Icons.Default.Checkroom) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Polerones Gamers Personalizados")}") { launchSingleTop = true }
-            } }
-
-            item { SectionLabel("Comunidad") }
-            item { DrawerItem("Blog & Noticias", Icons.Default.Article) {
-                navController.navigate("blog")
-            } }
-            item { DrawerItem("Eventos (Mapa)", Icons.Default.Map) {
-                navController.navigate("events")
-            } }
-
-            item {
-                DrawerItem("Soporte WhatsApp", Icons.Default.SupportAgent) {
-                    val text = "Hola, necesito soporte con mi pedido en Level-Up Gamer."
-                    val url = "https://wa.me/56912345678?text=${Uri.encode(text)}"
-                    ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                }
-            }
-            item {
-                DrawerItem("Compartir tienda", Icons.Default.Share) {
-                    val send = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, "Mira Level-Up Gamer: ofertas y puntos LevelUp 💚💙")
                     }
-                    ctx.startActivity(Intent.createChooser(send, "Compartir con…"))
                 }
             }
         }
 
+        LazyColumn(modifier = Modifier.weight(1f)) {
+
+            item { SectionLabel("Catálogo", onSurface) }
+
+            item { DrawerItem("Juegos de Mesa", Icons.Default.SportsEsports, onSurface) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Juegos de Mesa")}")
+            } }
+
+            item { DrawerItem("Accesorios", Icons.Default.Headphones, onSurface) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Accesorios")}")
+            } }
+
+            item { DrawerItem("Consolas", Icons.Default.VideogameAsset, onSurface) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Consolas")}")
+            } }
+
+            item { DrawerItem("Computadores Gamers", Icons.Default.Computer, onSurface) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Computadores Gamers")}")
+            } }
+
+        }
+
+        //  Footer gamer
         Text(
             text = "© 2025 Level-Up Gamer",
+            color = onSurface.copy(alpha = 0.7f),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            textAlign = TextAlign.Center
         )
     }
 }
 
-
 @Composable
-private fun SectionLabel(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+fun DrawerItem(
+    label: String,
+    icon: ImageVector,
+    tintColor: Color,
+    onClick: () -> Unit
+) {
+    NavigationDrawerItem(
+        label = { Text(label, color = tintColor) },
+        selected = false,
+        onClick = onClick,
+        icon = { Icon(icon, contentDescription = label, tint = tintColor) },
+        modifier = Modifier.padding(horizontal = 8.dp)
     )
 }
 
 @Composable
-private fun DrawerItem(
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
-) {
-    NavigationDrawerItem(
-        label = { Text(label) },
-        selected = false,
-        onClick = onClick,
-        icon = { Icon(icon, contentDescription = label) },
-        modifier = Modifier.padding(horizontal = 8.dp)
+fun SectionLabel(text: String, color: Color) {
+    Text(
+        text = text,
+        color = color.copy(alpha = 0.7f),
+        style = MaterialTheme.typography.labelLarge,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }
