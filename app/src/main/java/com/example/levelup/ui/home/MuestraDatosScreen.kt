@@ -9,26 +9,27 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.levelup.view.DrawerMenu
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import com.example.levelup.R
 
-// 🎨 Paleta gamer
 private val PrimaryBlue   = Color(0xFF1E90FF)
 private val SecondaryNeon = Color(0xFF39FF14)
 private val BgBlack       = Color(0xFF000000)
@@ -53,9 +54,7 @@ fun MuestraDatosScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
-                        Text("Level-Up Gamer", fontWeight = FontWeight.Bold, color = OnSurface)
-                    },
+                    title = { Text("Level-Up Gamer", fontWeight = FontWeight.Bold, color = OnSurface)},
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = null, tint = OnSurface)
@@ -73,7 +72,6 @@ fun MuestraDatosScreen(
                 )
             },
 
-            //FOOTER FIJO
             bottomBar = {
                 FooterSection()
             },
@@ -97,7 +95,7 @@ private fun HomeScrollableContent(
     modifier: Modifier = Modifier
 ) {
     val products = listOf(
-        HeroProduct(R.drawable.dia_mundial_del_lol, "Arma tu propio pc con Level Gamer"),
+        HeroProduct(R.drawable.dia_mundial_del_lol, "Arma tu pc gamer con Level Up"),
         HeroProduct(R.drawable.cultura_juvenil,      "T1 Tricampeon"),
         HeroProduct(R.drawable.pc_ultragamer,              "SETUP STREAMER")
     )
@@ -105,7 +103,7 @@ private fun HomeScrollableContent(
     Column(
         modifier = modifier
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),   // SOLO EL CONTENIDO SCROLLEA
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -113,10 +111,10 @@ private fun HomeScrollableContent(
             text = "ENVÍOS A TODO CHILE",
             color = PrimaryBlue,
             fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            textAlign = TextAlign.Center
+                .padding(bottom = 12.dp)
         )
 
         HeroCarousel(products, Modifier.fillMaxWidth())
@@ -125,33 +123,94 @@ private fun HomeScrollableContent(
 
         HighlightsSection(navController)
 
-        Spacer(Modifier.height(100.dp)) // espacio antes del footer fijo
+        Spacer(Modifier.height(100.dp))
     }
 }
 
+// FOOTER GAMER FIJO
 @Composable
 private fun FooterSection() {
     Surface(
         color = SurfaceDark,
-        shadowElevation = 8.dp
+        shadowElevation = 12.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(vertical = 10.dp, horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Divider(color = OnSurface.copy(alpha = 0.3f))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.35f)
+                    .height(3.dp)
+                    .background(SecondaryNeon)
+            )
 
             Spacer(Modifier.height(8.dp))
 
-            Text("Level-Up Gamer · Redes sociales",
-                color = OnSurface.copy(alpha = 0.7f),
-                style = MaterialTheme.typography.bodySmall)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(32.dp),
+                    contentScale = ContentScale.Fit
+                )
 
-            Text("© 2025 Todos los derechos reservados",
+                Column {
+                    Text(
+                        text = "Level-Up Gamer",
+                        color = SecondaryNeon,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(
+                                color = SecondaryNeon.copy(alpha = 0.8f),
+                                blurRadius = 16f,
+                                offset = Offset(0f, 0f)
+                            )
+                        )
+                    )
+                    Text(
+                        text = "Tu tienda gamer de confianza",
+                        color = OnSurface.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                IconButton(onClick = { /* Instagram */ }) {
+                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color(0xFFE1306C))
+                }
+                IconButton(onClick = { /* YouTube/Twitch */ }) {
+                    Icon(Icons.Default.SmartDisplay, contentDescription = null, tint = Color(0xFFFF0000))
+                }
+                IconButton(onClick = { /* X/Twitter */ }) {
+                    Icon(Icons.Default.Public, contentDescription = null, tint = Color(0xFF1DA1F2))
+                }
+                IconButton(onClick = { /* Discord/WhatsApp */ }) {
+                    Icon(Icons.Default.Chat, contentDescription = null, tint = SecondaryNeon)
+                }
+            }
+
+            Spacer(Modifier.height(6.dp))
+
+            Text(
+                "© 2025 Level-Up Gamer · Todos los derechos reservados",
                 color = OnSurface.copy(alpha = 0.5f),
-                style = MaterialTheme.typography.bodySmall)
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -173,24 +232,16 @@ private fun HighlightsSection(navController: NavHostController) {
                 subtitle = "Promos activas",
                 accentColor = SecondaryNeon,
                 imageRes = R.drawable.oferta_gamer,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(170.dp)
-            ) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Ofertas")}")
-            }
+                modifier = Modifier.weight(1f).height(170.dp)
+            ) { navController.navigate("catalogo?categoria=${Uri.encode("Ofertas")}") }
 
             BigInfoCard(
                 title = "Descuentos Especiales",
-                subtitle = "Por tiempo limitado",
+                subtitle = "Tiempo limitado",
                 accentColor = PrimaryBlue,
                 imageRes = R.drawable.descuento,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(170.dp)
-            ) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Descuentos Especiales")}")
-            }
+                modifier = Modifier.weight(1f).height(170.dp)
+            ) { navController.navigate("catalogo?categoria=${Uri.encode("Descuentos Especiales")}") }
         }
 
         Row(
@@ -202,24 +253,16 @@ private fun HighlightsSection(navController: NavHostController) {
                 subtitle = "Lo más vendido",
                 accentColor = Color(0xFFFFC107),
                 imageRes = R.drawable.top,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(170.dp)
-            ) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Top Ventas")}")
-            }
+                modifier = Modifier.weight(1f).height(170.dp)
+            ) { navController.navigate("catalogo?categoria=${Uri.encode("Top Ventas")}") }
 
             BigInfoCard(
                 title = "Nuevos Productos",
                 subtitle = "Recién agregados",
                 accentColor = Color(0xFF9C27B0),
                 imageRes = R.drawable.nuevo,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(170.dp)
-            ) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Nuevos Productos")}")
-            }
+                modifier = Modifier.weight(1f).height(170.dp)
+            ) { navController.navigate("catalogo?categoria=${Uri.encode("Nuevos Productos")}") }
         }
     }
 }
@@ -230,7 +273,7 @@ fun BigInfoCard(
     subtitle: String,
     accentColor: Color,
     imageRes: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onClick: () -> Unit
 ) {
     Card(
@@ -239,7 +282,6 @@ fun BigInfoCard(
         elevation = CardDefaults.cardElevation(6.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-
         Box(modifier = Modifier.fillMaxSize()) {
 
             Image(
@@ -256,9 +298,7 @@ fun BigInfoCard(
             )
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(14.dp),
+                modifier = Modifier.fillMaxSize().padding(14.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
@@ -278,7 +318,6 @@ fun BigInfoCard(
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
-
                     Text(
                         text = subtitle,
                         color = OnSurface,
@@ -291,8 +330,7 @@ fun BigInfoCard(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = accentColor,
                         contentColor = Color.Black
-                    ),
-                    modifier = Modifier.align(Alignment.End)
+                    )
                 ) {
                     Text("Ver más")
                 }
@@ -301,6 +339,7 @@ fun BigInfoCard(
     }
 }
 
+// ⭐ CARRUSEL PRINCIPAL
 @Composable
 fun HeroCarousel(
     products: List<HeroProduct>,
@@ -321,28 +360,20 @@ fun HeroCarousel(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Crossfade(targetState = currentIndex, label = "hero-carousel") { index ->
+            Crossfade(targetState = currentIndex) { index ->
                 Image(
                     painter = painterResource(id = products[index].imageRes),
                     contentDescription = products[index].title,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp),
+                    modifier = Modifier.fillMaxWidth().height(220.dp),
                     contentScale = ContentScale.Crop
                 )
             }
 
             Spacer(Modifier.height(6.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 products.forEachIndexed { dotIndex, _ ->
                     Box(
                         modifier = Modifier
@@ -351,8 +382,7 @@ fun HeroCarousel(
                             .background(
                                 if (dotIndex == currentIndex)
                                     SecondaryNeon
-                                else
-                                    PrimaryBlue.copy(alpha = 0.4f)
+                                else PrimaryBlue.copy(alpha = 0.4f)
                             )
                     )
                 }
@@ -365,9 +395,7 @@ fun HeroCarousel(
                 color = OnSurface,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
             )
         }
     }
