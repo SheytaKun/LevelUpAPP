@@ -50,7 +50,6 @@ fun AppNav(navController: NavHostController) {
         ) { bs ->
             val username = Uri.decode(bs.arguments?.getString("username").orEmpty())
 
-            // 👉 Aquí llamas tu HOME + DRAWER correctamente
             MuestraDatosScreen(
                 navController = navController,
                 username = username
