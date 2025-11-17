@@ -21,7 +21,7 @@ import java.util.Locale
 
 data class CarritoItem(
     val nombre: String,
-    val precioUnitario: Int,   // CLP
+    val precioUnitario: Int,
     val cantidad: Int,
     val notas: String = ""
 ) {

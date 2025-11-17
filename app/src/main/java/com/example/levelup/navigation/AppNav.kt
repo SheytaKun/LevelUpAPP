@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.levelup.ui.blog.BlogScreen
 import com.example.levelup.ui.catalog.CatalogScreen
+import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.view.DrawerMenu
 import com.example.levelup.ui.login.LoginScreen
@@ -48,8 +49,14 @@ fun AppNav(navController: NavHostController) {
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) { bs ->
             val username = Uri.decode(bs.arguments?.getString("username").orEmpty())
-            DrawerMenu(username = username, navController = navController)
+
+            // 👉 Aquí llamas tu HOME + DRAWER correctamente
+            MuestraDatosScreen(
+                navController = navController,
+                username = username
+            )
         }
+
 
         composable(
             route = catalogo,
