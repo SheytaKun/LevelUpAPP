@@ -14,6 +14,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +44,10 @@ fun DrawerMenu(
 ) {
     val ctx = LocalContext.current
 
+    // 👉 Estados para abrir/cerrar secciones
+    var catalogExpanded by remember { mutableStateOf(false) }
+    var moreExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -49,6 +57,7 @@ fun DrawerMenu(
             .verticalScroll(rememberScrollState())
     ) {
 
+        // Íconos superiores
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -63,6 +72,7 @@ fun DrawerMenu(
 
         Spacer(Modifier.height(16.dp))
 
+        // Botón de contacto (WhatsApp)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,7 +81,7 @@ fun DrawerMenu(
                 .background(SecondaryNeon)
                 .clickable {
                     val text = "Hola, necesito soporte con mi pedido en Level-Up Gamer."
-                    val url = "https://wa.me/56912345678?text=${Uri.encode(text)}"
+                    val url = "https://wa.me/56938942576?text=${Uri.encode(text)}"
                     ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
                 .padding(vertical = 10.dp, horizontal = 12.dp),
@@ -92,97 +102,81 @@ fun DrawerMenu(
 
         Spacer(Modifier.height(16.dp))
 
-        Text(
-            text = "Catálogo",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            color = PrimaryBlue,
-            fontWeight = FontWeight.Bold
+        SectionHeader(
+            title = "Catálogo",
+            expanded = catalogExpanded,
+            onClick = { catalogExpanded = !catalogExpanded }
         )
 
-        DrawerItemGamer(
-            label = "Novedades",
-            icon = Icons.Default.Star
-        ) {
-            navController.navigate("catalogo?categoria=${Uri.encode("Novedades")}") {
-                launchSingleTop = true
+        if (catalogExpanded) {
+            DrawerItemGamer(
+                label = "Novedades",
+                icon = Icons.Default.Star
+            ) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Novedades")}") {
+                    launchSingleTop = true
+                }
             }
-        }
 
-        DrawerItemGamer(
-            label = "Vestidos",
-            icon = Icons.Default.Checkroom
-        ) {
-            navController.navigate("catalogo?categoria=${Uri.encode("Vestidos")}") {
-                launchSingleTop = true
+            DrawerItemGamer(
+                label = "Vestidos",
+                icon = Icons.Default.Checkroom
+            ) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Vestidos")}") {
+                    launchSingleTop = true
+                }
             }
-        }
 
-        DrawerItemGamer(
-            label = "Poleras",
-            icon = Icons.Default.Checkroom
-        ) {
-            navController.navigate("catalogo?categoria=${Uri.encode("Poleras")}") {
-                launchSingleTop = true
+            DrawerItemGamer(
+                label = "Poleras",
+                icon = Icons.Default.Checkroom
+            ) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Poleras")}") {
+                    launchSingleTop = true
+                }
             }
-        }
 
-        DrawerItemGamer(
-            label = "Pantalones",
-            icon = Icons.Default.Dashboard
-        ) {
-            navController.navigate("catalogo?categoria=${Uri.encode("Pantalones")}") {
-                launchSingleTop = true
+            DrawerItemGamer(
+                label = "Pantalones",
+                icon = Icons.Default.Dashboard
+            ) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Pantalones")}") {
+                    launchSingleTop = true
+                }
             }
-        }
 
-        DrawerItemGamer(
-            label = "Polerones",
-            icon = Icons.Default.Hiking
-        ) {
-            navController.navigate("catalogo?categoria=${Uri.encode("Polerones")}") {
-                launchSingleTop = true
+            DrawerItemGamer(
+                label = "Polerones",
+                icon = Icons.Default.Hiking
+            ) {
+                navController.navigate("catalogo?categoria=${Uri.encode("Polerones")}") {
+                    launchSingleTop = true
+                }
             }
         }
 
         Spacer(Modifier.height(8.dp))
 
-        Text(
-            text = "Más",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            color = PrimaryBlue,
-            fontWeight = FontWeight.Bold
+        SectionHeader(
+            title = "Más",
+            expanded = moreExpanded,
+            onClick = { moreExpanded = !moreExpanded }
         )
 
-        DrawerItemGamer(
-            label = "Blog & Noticias",
-            icon = Icons.Default.Article
-        ) {
-            navController.navigate("blog")
-        }
+        if (moreExpanded) {
+            DrawerItemGamer(
+                label = "Blog & Noticias",
+                icon = Icons.Default.Article
+            ) {
+                navController.navigate("blog")
+            }
 
-        DrawerItemGamer(
-            label = "Eventos",
-            icon = Icons.Default.Map
-        ) {
-            navController.navigate("events")
-        }
-
-        DrawerItemGamer(
-            label = "Carrito",
-            icon = Icons.Default.ShoppingCart
-        ) {
-            navController.navigate("cart")
-        }
-
-        DrawerItemGamer(
-            label = "Perfil",
-            icon = Icons.Default.Person
-        ) {
-            navController.navigate("profile")
+            DrawerItemGamer(
+                label = "Eventos",
+                icon = Icons.Default.Map
+            ) {
+                navController.navigate("events")
+            }
         }
     }
 }
@@ -231,6 +225,33 @@ private fun DrawerItemGamer(
             text = label,
             color = OnSurface,
             fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    title: String,
+    expanded: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            color = PrimaryBlue,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+            contentDescription = if (expanded) "Contraer" else "Expandir",
+            tint = PrimaryBlue
         )
     }
 }

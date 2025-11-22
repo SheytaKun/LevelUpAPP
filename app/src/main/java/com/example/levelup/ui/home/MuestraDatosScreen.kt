@@ -62,6 +62,9 @@ fun MuestraDatosScreen(
                     },
                     actions = {
                         IconButton(onClick = { navController.navigate("profile") }) {
+                            Icon(Icons.Default.Notifications, contentDescription = null, tint = OnSurface)
+                        }
+                        IconButton(onClick = { navController.navigate("profile") }) {
                             Icon(Icons.Default.Person, contentDescription = null, tint = OnSurface)
                         }
                         IconButton(onClick = { navController.navigate("cart") }) {

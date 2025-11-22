@@ -3,9 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-    // Agregar esto para habilitar KAPT
+    // Habilitar KAPT
     kotlin("kapt")
-
 }
 
 android {
@@ -31,15 +30,27 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    // 🔥 Solución a los archivos duplicados META-INF
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/io.netty.versions.properties"
+        }
     }
 }
 
@@ -54,17 +65,17 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Dependencia para viewModel
+    // ViewModel
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    // Dependencia para la navegación con Jetpack Compose
+    // Navegación Jetpack Compose
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
-    // Íconos (core opcional) y EXTENDIDOS (¡este es el clave!)
+    // Íconos Material
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Dependencias Room
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.foundation)
@@ -74,7 +85,6 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
-
     // CameraX
     val camerax_version = "1.3.3"
     implementation("androidx.camera:camera-core:$camerax_version")
@@ -82,24 +92,23 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
 
-    // ZXing para leer QR
+    // ZXing
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-    // ML Kit Barcode Scanning
+    // ML Kit códigos QR
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
 
-    // Retrofit y Gson Converter
+    // Retrofit y Gson
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
-    // Corrutinas para trabajo asincrónico
+    // Corrutinas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
 
     // Jetpack Compose
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
