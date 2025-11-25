@@ -19,6 +19,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "NEWS_API_KEY",
+            "\"3132f937f66f43fe983210d2b0bf0d2f\""
+        )
     }
 
     buildTypes {
@@ -42,9 +48,9 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true   // 👈 HABILITAMOS BuildConfig
     }
 
-    // 🔥 Solución a los archivos duplicados META-INF
     packaging {
         resources {
             excludes += "META-INF/INDEX.LIST"
@@ -102,6 +108,15 @@ dependencies {
     // Retrofit y Gson
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // Logging requests en Logcat
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // ViewModel + coroutines
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Corrutinas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
