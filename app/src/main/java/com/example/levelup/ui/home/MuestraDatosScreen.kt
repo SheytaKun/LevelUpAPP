@@ -76,7 +76,8 @@ fun MuestraDatosScreen(
             },
 
             bottomBar = {
-                FooterSection()
+                // pasamos el navController al footer
+                FooterSection(navController)
             },
 
             containerColor = BgBlack
@@ -100,7 +101,7 @@ private fun HomeScrollableContent(
     val products = listOf(
         HeroProduct(R.drawable.dia_mundial_del_lol, "Arma tu pc gamer con Level Up"),
         HeroProduct(R.drawable.cultura_juvenil,      "T1 Tricampeon"),
-        HeroProduct(R.drawable.pc_ultragamer,              "SETUP STREAMER")
+        HeroProduct(R.drawable.pc_ultragamer,        "SETUP STREAMER")
     )
 
     Column(
@@ -132,7 +133,7 @@ private fun HomeScrollableContent(
 
 // FOOTER GAMER FIJO
 @Composable
-private fun FooterSection() {
+private fun FooterSection(navController: NavHostController) {
     Surface(
         color = SurfaceDark,
         shadowElevation = 12.dp
@@ -192,7 +193,8 @@ private fun FooterSection() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(onClick = { /* Instagram */ }) {
+                // aquí se navega al escáner QR
+                IconButton(onClick = { navController.navigate("qrScanner") }) {
                     Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color(0xFFE1306C))
                 }
                 IconButton(onClick = { /* YouTube/Twitch */ }) {

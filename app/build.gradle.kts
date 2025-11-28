@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.ui)
     implementation(libs.firebase.appdistribution.gradle)
+    implementation(libs.androidx.compose.runtime.livedata)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
@@ -124,6 +125,9 @@ dependencies {
     // Jetpack Compose
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    implementation("com.google.guava:guava:32.1.3-android")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

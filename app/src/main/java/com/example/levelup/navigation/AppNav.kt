@@ -1,3 +1,4 @@
+// kotlin
 package com.example.levelup.navigation
 
 import android.net.Uri
@@ -9,6 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.camara.ui.view.QrScannerScreen
+import com.example.camara.ui.viewmodel.QrViewModel
 import com.example.levelup.ui.blog.BlogScreen
 import com.example.levelup.ui.catalog.CatalogScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
@@ -20,7 +23,12 @@ import com.example.levelup.view.ProductoFormScreen
 import com.example.levelup.ui.profile.ProfileScreen   // ⬅️ IMPORT NUEVO
 
 @Composable
-fun AppNav(navController: NavHostController) {
+fun AppNav(
+    navController: NavHostController,
+    qrViewModel: QrViewModel,
+    hasCameraPermission: Boolean,
+    onRequestPermission: () -> Unit
+) {
 
     LaunchedEffect(navController) {
         android.util.Log.d("NAV", "AppNav nav=${System.identityHashCode(navController)}")
@@ -37,6 +45,7 @@ fun AppNav(navController: NavHostController) {
     val register = "register"
     val productForm = "producto_form/{nombre}/{precio}"
     val forgot   = "forgot"
+    val qrScanner = "qrScanner" // <- ruta definida
 
     NavHost(navController = navController, startDestination = login) {
 
@@ -114,6 +123,15 @@ fun AppNav(navController: NavHostController) {
                         launchSingleTop = true
                     }
                 }
+            )
+
+        }
+        composable(qrScanner) {
+            QrScannerScreen(
+                viewModel = qrViewModel,
+                hasCameraPermission = hasCameraPermission,
+                onRequestPermission = onRequestPermission,
+                navController = navController
             )
         }
 
