@@ -1,64 +1,55 @@
 package com.example.levelup.ui.register
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.levelup.data.repository.AuthRepository
+import com.example.levelup.data.database.ProductoDataBase
+import com.example.levelup.data.repository.UsuarioRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(
-    private val repo: AuthRepository = AuthRepository()
-) : ViewModel() {
+class RegisterViewModel(app: Application) : AndroidViewModel(app) {
 
-    var ui = mutableStateOf(RegisterUistate())
-        private set
+    private val repo: UsuarioRepository
 
-    private fun isEmailValid(email: String) =
-        Regex("^[\\w.+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
+    private val _uiState = MutableStateFlow(RegisterUistate())
+    val uiState: StateFlow<RegisterUistate> = _uiState
 
-    fun onEmail(v: String)  { ui.value = ui.value.copy(email = v,  error = null) }
-    fun onPass(v: String)   { ui.value = ui.value.copy(pass = v,   error = null) }
-    fun onPass2(v: String)  { ui.value = ui.value.copy(pass2 = v,  error = null) }
+    init {
+        val db = ProductoDataBase.getDataBase(app)
+        val dao = db.usuarioDao()
+        repo = UsuarioRepository(dao)
+    }
 
-    fun submit(onSuccess: (email: String) -> Unit) {
-        val email = ui.value.email.trim().lowercase()
-        val p1 = ui.value.pass
-        val p2 = ui.value.pass2
-
-        if (email.isEmpty() || p1.isEmpty() || p2.isEmpty()) {
-            ui.value = ui.value.copy(error = "Completa todos los campos")
-            return
-        }
-        if (!isEmailValid(email)) {
-            ui.value = ui.value.copy(error = "Correo inválido")
-            return
-        }
-        if (p1.length < 6) {
-            ui.value = ui.value.copy(error = "La contraseña debe tener al menos 6 caracteres")
-            return
-        }
-        if (p1 != p2) {
-            ui.value = ui.value.copy(error = "Las contraseñas no coinciden")
-            return
-        }
-
-
-        ui.value = ui.value.copy(isLoading = true, error = null)
-
+    fun registrar(nombre: String, email: String, password: String) {
         viewModelScope.launch {
-            try {
-                val ok = repo.register(email, p1)
-                if (ok) {
-                    onSuccess(email)
-                    ui.value = RegisterUistate()
-                } else {
-                    ui.value = ui.value.copy(error = "No se pudo registrar")
+            _uiState.value = RegisterUistate(isLoading = true)
+
+            val result = repo.registrar(nombre, email, password)
+
+            _uiState.value = result.fold(
+                onSuccess = {
+                    RegisterUistate(
+                        isLoading = false,
+                        success = true
+                    )
+                },
+                onFailure = { e ->
+                    RegisterUistate(
+                        isLoading = false,
+                        error = e.message
+                    )
                 }
-            } catch (e: Exception) {
-                ui.value = ui.value.copy(error = e.message ?: "Error al registrar")
-            } finally {
-                ui.value = ui.value.copy(isLoading = false)
-            }
+            )
         }
+    }
+
+    fun limpiarError() {
+        _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    fun consumirSuccess() {
+        _uiState.value = _uiState.value.copy(success = false)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.levelup.ui.login
 
+import android.app.Application
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -10,29 +11,42 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.levelup.R
+import com.example.levelup.ui.common.AppViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    navController: NavHostController,
-    vm: LoginViewModel = viewModel()
+    navController: NavHostController
 ) {
-    val state = vm.uiState.value
-    var showPass by remember { mutableStateOf(false) }
+    // Crear VM con factory (Application)
+    val context = LocalContext.current
+    val app = context.applicationContext as Application
+    val factory = remember { AppViewModelFactory(app) }
+    val vm: LoginViewModel = viewModel(factory = factory)
 
-    LaunchedEffect(navController) {
-        android.util.Log.d("NAV", "LoginScreen nav=${System.identityHashCode(navController)}")
+    val state by vm.uiState.collectAsState()
+    var showPass by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    // Navegar cuando login OK
+    LaunchedEffect(state.usuarioLogueado) {
+        state.usuarioLogueado?.let { user ->
+            navController.navigate("drawer/${Uri.encode(user.email)}") {
+                popUpTo("login") { inclusive = true }
+                launchSingleTop = true
+            }
+        }
     }
 
     val levelUpDark = darkColorScheme(
@@ -88,9 +102,9 @@ fun LoginScreen(
                 Spacer(Modifier.height(28.dp))
 
                 OutlinedTextField(
-                    value = state.username,
-                    onValueChange = vm::onUsernameChange,
-                    label = { Text("Usuario") },
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Usuario / Correo") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(0.95f)
                 )
@@ -98,8 +112,8 @@ fun LoginScreen(
                 Spacer(Modifier.height(12.dp))
 
                 OutlinedTextField(
-                    value = state.password,
-                    onValueChange = vm::onPasswordChange,
+                    value = password,
+                    onValueChange = { password = it },
                     label = { Text("Contraseña") },
                     singleLine = true,
                     visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
@@ -111,10 +125,10 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(0.95f)
                 )
 
-                if (state.error != null) {
+                state.error?.let { msg ->
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        text = state.error ?: "",
+                        text = msg,
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                     )
@@ -122,17 +136,10 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(28.dp))
 
-
-                Spacer(Modifier.height(12.dp))
-
-                // Botón real de login → navega a drawer con argumento
                 Button(
                     onClick = {
-                        vm.submit { email, isDuoc ->
-                            navController.navigate("drawer/${Uri.encode(email)}") {
-                                popUpTo("login") { inclusive = true }
-                                launchSingleTop = true
-                            }
+                        if (email.isNotBlank() && password.isNotBlank()) {
+                            vm.login(email, password)
                         }
                     },
                     enabled = !state.isLoading,
@@ -154,16 +161,9 @@ fun LoginScreen(
                         Text("Crear cuenta")
                     }
                 }
+
                 Spacer(Modifier.height(20.dp))
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    val navController = rememberNavController() // SOLO en preview
-    val vm: LoginViewModel = viewModel()
-    LoginScreen(navController = navController, vm = vm)
 }

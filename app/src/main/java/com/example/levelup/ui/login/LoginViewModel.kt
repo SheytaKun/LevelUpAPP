@@ -1,60 +1,51 @@
 package com.example.levelup.ui.login
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.levelup.data.repository.AuthRepository
+import com.example.levelup.data.database.ProductoDataBase
+import com.example.levelup.data.repository.UsuarioRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    private val repo: AuthRepository = AuthRepository()
-) : ViewModel() {
+class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
-    var uiState = androidx.compose.runtime.mutableStateOf(LoginUiState())
-        private set
-    private fun isDuocMail(email: String) =
-        //email.endsWith("@duoc.cl", true) || email.endsWith("@profesor.duoc.cl", true)
-        email.endsWith("admin@duoc.cl", true)
+    private val repo: UsuarioRepository
 
-    private fun isEmailValid(email: String) =
-        Regex("^[\\w.+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun onUsernameChange(v: String) {
-        uiState.value = uiState.value.copy(username = v, error = null) }
-    fun onPasswordChange(v: String) {
-        uiState.value = uiState.value.copy(password = v, error = null) }
+    init {
+        val db = ProductoDataBase.getDataBase(app)
+        val dao = db.usuarioDao()
+        repo = UsuarioRepository(dao)
+    }
 
-    fun submit(onSuccess: (email: String, isDuoc: Boolean) -> Unit) {
-        val email = uiState.value.username.trim().lowercase()
-        val pass  = uiState.value.password
-
-        when {
-            email.isEmpty() || pass.isEmpty() -> {
-                uiState.value = uiState.value.copy(error = "Completa correo y contraseña"); return
-            }
-            !isEmailValid(email) -> {
-                uiState.value = uiState.value.copy(error = "Correo inválido"); return
-            }
-            pass.length < 6 -> {
-                uiState.value = uiState.value.copy(error = "La contraseña debe tener al menos 6 caracteres"); return
-            }
-        }
-
-        uiState.value = uiState.value.copy(isLoading = true, error = null)
-
+    fun login(email: String, password: String) {
         viewModelScope.launch {
-            try {
-                val ok = repo.login(email, pass)
-                if (ok) {
-                    onSuccess(email, isDuocMail(email))
-                    uiState.value = LoginUiState()
-                } else {
-                    uiState.value = uiState.value.copy(error = "Credenciales inválidas")
+            _uiState.value = LoginUiState(isLoading = true)
+
+            val result = repo.login(email, password)
+
+            _uiState.value = result.fold(
+                onSuccess = { user ->
+                    LoginUiState(
+                        isLoading = false,
+                        usuarioLogueado = user
+                    )
+                },
+                onFailure = { e ->
+                    LoginUiState(
+                        isLoading = false,
+                        error = e.message
+                    )
                 }
-            } catch (e: Exception) {
-                uiState.value = uiState.value.copy(error = e.message ?: "Error al iniciar sesión")
-            } finally {
-                uiState.value = uiState.value.copy(isLoading = false)
-            }
+            )
         }
+    }
+
+    fun limpiarError() {
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }
