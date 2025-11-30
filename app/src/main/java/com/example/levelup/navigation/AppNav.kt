@@ -13,6 +13,7 @@ import com.example.levelup.data.session.SessionManager
 import com.example.levelup.ui.blog.BlogScreen
 import com.example.levelup.ui.catalog.CatalogScreen
 import com.example.levelup.ui.cart.CartScreen
+import com.example.levelup.ui.checkout.CheckoutScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.product.ProductDetailScreen
@@ -43,18 +44,17 @@ fun AppNav(
     val catalogo        = "catalogo?categoria={categoria}"
     val product         = "product/{id}"
     val cart            = "cart"
+    val checkout        = "checkout"
     val profile         = "profile"
-    val accountSettings = "account_settings"   // 👈 NUEVA RUTA
+    val accountSettings = "account_settings"
     val blog            = "blog"
     val events          = "events"
     val register        = "register"
     val productForm     = "producto_form/{nombre}/{precio}"
-    val forgot          = "forgot"
     val qrScanner       = "qrScanner"
 
     NavHost(navController = navController, startDestination = home) {
 
-        // 🏠 HOME
         composable(home) {
             val usuario = SessionManager.usuarioActual
             val username = usuario?.email ?: "Invitado"
@@ -65,12 +65,10 @@ fun AppNav(
             )
         }
 
-        // 🔐 LOGIN
         composable(login) {
             LoginScreen(navController = navController)
         }
 
-        // Drawer (si lo sigues usando)
         composable(
             route = drawer,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
@@ -82,7 +80,6 @@ fun AppNav(
             )
         }
 
-        // 🛒 CATÁLOGO
         composable(
             route = catalogo,
             arguments = listOf(
@@ -102,7 +99,6 @@ fun AppNav(
             )
         }
 
-        // 🧩 DETALLE PRODUCTO
         composable(
             route = product,
             arguments = listOf(navArgument("id") { type = NavType.StringType })
@@ -116,7 +112,6 @@ fun AppNav(
             )
         }
 
-        // ➕ FORM PRODUCTO
         composable(
             route = productForm,
             arguments = listOf(
@@ -134,7 +129,6 @@ fun AppNav(
             )
         }
 
-        // 🛒 CARRITO REAL
         composable(cart) {
             CartScreen(
                 navController = navController,
@@ -142,7 +136,13 @@ fun AppNav(
             )
         }
 
-        // 👤 PERFIL
+        composable(checkout) {
+            CheckoutScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
+        }
+
         composable(profile) {
             ProfileScreen(
                 navController = navController,
@@ -150,7 +150,6 @@ fun AppNav(
             )
         }
 
-        // ⚙️ CONFIGURACIÓN DE CUENTA
         composable(accountSettings) {
             AccountSettingsScreen(
                 navController = navController,
@@ -158,17 +157,14 @@ fun AppNav(
             )
         }
 
-        // 📰 BLOG
         composable(blog) {
             BlogScreen(navController = navController)
         }
 
-        // 🎫 EVENTOS
         composable(events) {
             Text("Eventos")
         }
 
-        // 📝 REGISTRO
         composable(register) {
             RegisterScreen(
                 nav = navController,
@@ -181,7 +177,6 @@ fun AppNav(
             )
         }
 
-        // 📷 QR SCANNER
         composable(qrScanner) {
             QrScannerScreen(
                 viewModel = qrViewModel,

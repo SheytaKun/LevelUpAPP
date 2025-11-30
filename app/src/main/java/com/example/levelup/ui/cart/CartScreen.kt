@@ -219,7 +219,7 @@ fun CartScreen(
                             }
 
                             Button(
-                                onClick = { /* Implementar checkout */ },
+                                onClick = { navController.navigate("checkout") },
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(50.dp),

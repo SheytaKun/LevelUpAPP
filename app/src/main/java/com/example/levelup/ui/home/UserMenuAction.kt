@@ -16,48 +16,32 @@ fun UserMenuAction(
     var expanded by remember { mutableStateOf(false) }
     val usuario = SessionManager.usuarioActual
 
-    IconButton(
-        onClick = { expanded = true },
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "Usuario"
-        )
-    }
+    if (usuario != null) {
+        IconButton(
+            onClick = { navController.navigate("profile") },
+            modifier = modifier
+        ) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Ir al perfil",
+                tint = androidx.compose.ui.graphics.Color(0xFF39FF14) // SecondaryNeon color hint
+            )
+        }
+    } else {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = modifier
+        ) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Opciones de cuenta"
+            )
+        }
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        if (usuario != null) {
-            DropdownMenuItem(
-                text = { Text(usuario.nombre) },
-                onClick = { }
-            )
-            DropdownMenuItem(
-                text = { Text(usuario.email) },
-                onClick = { }
-            )
-            DropdownMenuItem(
-                text = { Text("Ver mi cuenta") },
-                onClick = {
-                    expanded = false
-                    navController.navigate("profile")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Cerrar sesión") },
-                onClick = {
-                    SessionManager.usuarioActual = null
-                    expanded = false
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            )
-        } else {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
             DropdownMenuItem(
                 text = { Text("Iniciar sesión") },
                 onClick = {
