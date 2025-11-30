@@ -2,47 +2,43 @@ package com.example.levelup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.levelup.data.repository.StaticProductData
 import com.example.levelup.data.model.Producto
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.levelup.data.repository.ProductoRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ProductoViewModel : ViewModel() {
+class ProductoViewModel(
+    private val repository: ProductoRepository
+) : ViewModel() {
 
-    private val _carrito = MutableStateFlow<List<Producto>>(emptyList())
-    val carrito: StateFlow<List<Producto>> = _carrito.asStateFlow()
+    val productos: StateFlow<List<Producto>> = repository.obtenerProductos()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun agregarAlCarrito(producto: Producto) {
-        viewModelScope.launch {
-            val listaActual = _carrito.value.toMutableList()
-            val existente = listaActual.indexOfFirst { it.nombre == producto.nombre }
+    fun productosPorCategoria(categoria: String?): Flow<List<Producto>> {
+        return if (categoria.isNullOrBlank()) {
+            repository.obtenerProductos()
+        } else {
+            repository.obtenerPorCategoria(categoria)
+        }
+    }
 
-            if (existente >= 0) {
-                val anterior = listaActual[existente]
-                val nuevaCantidad = try {
-                    anterior.stock.toInt() + producto.stock.toInt()
-                } catch (_: Exception) {
-                    producto.stock.coerceAtLeast(1)
-                }
+    suspend fun getProductoPorCodigo(codigo: String): Producto? {
+        return repository.obtenerProductoPorCodigo(codigo)
+    }
 
-                listaActual[existente] = anterior.copy(stock = nuevaCantidad)
-            } else {
-                listaActual.add(producto)
+    fun seedDatabaseIfEmpty() {
+         viewModelScope.launch {
+            val staticProducts = StaticProductData.products
+            staticProducts.forEach { staticProd ->
+                 val existing = repository.obtenerProductoPorCodigo(staticProd.codigo)
+                 if (existing == null) {
+                     repository.insertarProducto(staticProd)
+                 }
             }
-            _carrito.value = listaActual
-        }
-    }
-
-    fun eliminarDelCarrito(nombre: String) {
-        viewModelScope.launch {
-            _carrito.value = _carrito.value.filterNot { it.nombre == nombre }
-        }
-    }
-
-    fun limpiarCarrito() {
-        viewModelScope.launch {
-            _carrito.value = emptyList()
-        }
+         }
     }
 }

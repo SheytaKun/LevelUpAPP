@@ -4,24 +4,27 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.levelup.data.dao.CartDao
 import com.example.levelup.data.dao.UsuarioDao
 import com.example.levelup.data.dao.ProductoDao
 import com.example.levelup.data.model.UsuarioEntity
 import com.example.levelup.data.model.Producto
-
+import com.example.levelup.data.model.CartItem
 
 @Database(
     entities = [
         Producto::class,
-        UsuarioEntity::class
+        UsuarioEntity::class,
+        CartItem::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 abstract class ProductoDataBase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
     abstract fun usuarioDao(): UsuarioDao
+    abstract fun cartDao(): CartDao
 
     companion object {
         @Volatile
@@ -33,7 +36,9 @@ abstract class ProductoDataBase : RoomDatabase() {
                     context.applicationContext,
                     ProductoDataBase::class.java,
                     "producto_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

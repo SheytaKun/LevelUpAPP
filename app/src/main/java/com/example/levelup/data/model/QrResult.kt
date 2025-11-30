@@ -1,3 +1,3 @@
-package com.example.camara.data.model
+package com.example.levelup.data.model
 
 data class QrResult(val content: String)

@@ -3,6 +3,9 @@ package com.example.levelup.view
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +36,6 @@ class CarritoViewModel : ViewModel() {
     val items: StateFlow<List<CarritoItem>> = _items
 
     fun agregar(item: CarritoItem) {
-        // Si el mismo producto existe, acumula cantidad
         val actualizada = _items.value.toMutableList()
         val idx = actualizada.indexOfFirst { it.nombre == item.nombre && it.notas == item.notas }
         if (idx >= 0) {
@@ -68,6 +70,21 @@ fun ProductoFormScreen(
     val items by vm.items.collectAsState()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Personalizar Producto") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { navController.navigate("cart") }) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Ir al carrito")
+                    }
+                }
+            )
+        },
         bottomBar = {
             BottomAppBar {
                 Spacer(Modifier.weight(1f))
@@ -142,20 +159,20 @@ fun ProductoFormScreen(
                 enabled = precioInt > 0 && cantidad > 0,
                 modifier = Modifier.fillMaxWidth(0.9f)
             ) {
-                Text("Agregar al carrito")
+                Text("Agregar a la lista (Local)")
             }
 
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Carrito",
+                text = "Lista Temporal",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.fillMaxWidth(0.9f)
             )
 
             if (items.isEmpty()) {
                 Text(
-                    text = "Tu carrito está vacío",
+                    text = "Lista vacía",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .fillMaxWidth(0.9f)

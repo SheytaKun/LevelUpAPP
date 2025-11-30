@@ -1,10 +1,10 @@
-package com.example.camara.ui.viewmodel
+package com.example.levelup.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.camara.data.model.QrResult
-import com.example.camara.data.repository.QrRepository
+import com.example.levelup.data.model.QrResult
+import com.example.levelup.data.repository.QrRepository
 
 class QrViewModel : ViewModel() {
     private val repository = QrRepository()

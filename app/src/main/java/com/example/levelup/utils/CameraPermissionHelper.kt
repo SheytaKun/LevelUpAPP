@@ -1,4 +1,4 @@
-package com.example.lecturaqr.utils
+package com.example.levelup.utils
 
 import android.Manifest
 import android.content.Context

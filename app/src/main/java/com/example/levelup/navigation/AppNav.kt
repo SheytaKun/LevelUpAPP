@@ -10,22 +10,24 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.camara.ui.view.QrScannerScreen
-import com.example.camara.ui.viewmodel.QrViewModel
+import com.example.levelup.view.QrScannerScreen
+import com.example.levelup.viewmodel.QrViewModel
 import com.example.levelup.ui.blog.BlogScreen
+import com.example.levelup.ui.cart.CartScreen
 import com.example.levelup.ui.catalog.CatalogScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.product.ProductDetailScreen
-import com.example.levelup.view.DrawerMenu
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.register.RegisterScreen
 import com.example.levelup.view.ProductoFormScreen
-import com.example.levelup.ui.profile.ProfileScreen   // ⬅️ IMPORT NUEVO
+import com.example.levelup.ui.profile.ProfileScreen
+import com.example.levelup.viewmodel.CartViewModel
 
 @Composable
 fun AppNav(
     navController: NavHostController,
     qrViewModel: QrViewModel,
+    cartViewModel: CartViewModel,
     hasCameraPermission: Boolean,
     onRequestPermission: () -> Unit
 ) {
@@ -44,8 +46,7 @@ fun AppNav(
     val events   = "events"
     val register = "register"
     val productForm = "producto_form/{nombre}/{precio}"
-    val forgot   = "forgot"
-    val qrScanner = "qrScanner" // <- ruta definida
+    val qrScanner = "qrScanner"
 
     NavHost(navController = navController, startDestination = login) {
 
@@ -77,7 +78,11 @@ fun AppNav(
             )
         ) { bs ->
             val categoria = bs.arguments?.getString("categoria")
-            CatalogScreen(navController = navController, categoria = categoria)
+            CatalogScreen(
+                navController = navController, 
+                categoria = categoria,
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(
@@ -85,7 +90,11 @@ fun AppNav(
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { bs ->
             val id = bs.arguments?.getString("id").orEmpty()
-            ProductDetailScreen(navController = navController, codigo = Uri.decode(id))
+            ProductDetailScreen(
+                navController = navController, 
+                codigo = Uri.decode(id),
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(
@@ -100,7 +109,9 @@ fun AppNav(
             ProductoFormScreen(navController = navController, nombre = nombre, precio = precio)
         }
 
-        composable(cart)    { Text("Carrito") }
+        composable(cart) { 
+            CartScreen(navController = navController, viewModel = cartViewModel)
+        }
 
         composable(profile) {
             ProfileScreen(

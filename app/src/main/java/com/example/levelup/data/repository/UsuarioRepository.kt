@@ -7,9 +7,7 @@ class UsuarioRepository(
     private val usuarioDao: UsuarioDao
 ) {
 
-    // Registrar usuario (solo si no existe el email)
     suspend fun registrar(nombre: String, email: String, password: String): Result<Unit> {
-        // ¿Ya existe ese correo?
         val existente = usuarioDao.obtenerPorEmail(email)
         if (existente != null) {
             return Result.failure(Exception("El correo ya está registrado"))
@@ -25,7 +23,6 @@ class UsuarioRepository(
         return Result.success(Unit)
     }
 
-    // Login
     suspend fun login(email: String, password: String): Result<UsuarioEntity> {
         val usuario = usuarioDao.login(email, password)
         return if (usuario != null) {

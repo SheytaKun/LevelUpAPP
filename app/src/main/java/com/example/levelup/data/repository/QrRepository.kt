@@ -1,10 +1,9 @@
-package com.example.camara.data.repository
+package com.example.levelup.data.repository
 
-import com.example.camara.data.model.QrResult
+import com.example.levelup.data.model.QrResult
 
 class QrRepository {
     fun processQrContent(content: String): QrResult {
-        // Aquí podrías guardar o procesar el QR en una BD o API
         return QrResult(content)
     }
 }

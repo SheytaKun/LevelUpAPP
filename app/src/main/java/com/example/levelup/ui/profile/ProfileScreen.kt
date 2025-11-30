@@ -1,15 +1,21 @@
 package com.example.levelup.ui.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+
+private val SecondaryNeon = Color(0xFF39FF14)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,14 +28,29 @@ fun ProfileScreen(
     val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Cargar perfil una sola vez
     LaunchedEffect(emailFromSession) {
         emailFromSession?.let { vm.load(it) }
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Perfil de Usuario") })
+            TopAppBar(
+                title = { Text("Perfil de Usuario") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { navController.navigate("cart") }) {
+                        Icon(
+                            Icons.Default.ShoppingCart,
+                            contentDescription = "Carrito",
+                            tint = SecondaryNeon
+                        )
+                    }
+                }
+            )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHost) }
     ) { innerPadding ->
@@ -99,7 +120,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 🔵 Guardar cambios
                 Button(
                     onClick = {
                         vm.save {
@@ -114,7 +134,6 @@ fun ProfileScreen(
                     Text(if (state.isLoading) "Guardando..." else "Guardar cambios")
                 }
 
-                // 🔙 Volver sin guardar
                 OutlinedButton(
                     onClick = {
                         navController.popBackStack()
@@ -129,7 +148,7 @@ fun ProfileScreen(
                 Button(
                     onClick = {
                         navController.navigate("login") {
-                            popUpTo(0) { inclusive = true } // limpia toda la pila
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     },

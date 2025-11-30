@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -74,9 +73,17 @@ fun MuestraDatosScreen(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark)
                 )
             },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { navController.navigate("cart") },
+                    containerColor = SecondaryNeon,
+                    contentColor = BgBlack
+                ) {
+                    Icon(Icons.Default.ShoppingCart, contentDescription = "Ver carrito")
+                }
+            },
 
             bottomBar = {
-                // pasamos el navController al footer
                 FooterSection(navController)
             },
 
@@ -131,7 +138,6 @@ private fun HomeScrollableContent(
     }
 }
 
-// FOOTER GAMER FIJO
 @Composable
 private fun FooterSection(navController: NavHostController) {
     Surface(
@@ -193,17 +199,16 @@ private fun FooterSection(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                // aquí se navega al escáner QR
                 IconButton(onClick = { navController.navigate("qrScanner") }) {
                     Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color(0xFFE1306C))
                 }
-                IconButton(onClick = { /* YouTube/Twitch */ }) {
+                IconButton(onClick = { }) {
                     Icon(Icons.Default.SmartDisplay, contentDescription = null, tint = Color(0xFFFF0000))
                 }
-                IconButton(onClick = { /* X/Twitter */ }) {
+                IconButton(onClick = { }) {
                     Icon(Icons.Default.Public, contentDescription = null, tint = Color(0xFF1DA1F2))
                 }
-                IconButton(onClick = { /* Discord/WhatsApp */ }) {
+                IconButton(onClick = { }) {
                     Icon(Icons.Default.Chat, contentDescription = null, tint = SecondaryNeon)
                 }
             }
@@ -344,7 +349,6 @@ fun BigInfoCard(
     }
 }
 
-// ⭐ CARRUSEL PRINCIPAL
 @Composable
 fun HeroCarousel(
     products: List<HeroProduct>,

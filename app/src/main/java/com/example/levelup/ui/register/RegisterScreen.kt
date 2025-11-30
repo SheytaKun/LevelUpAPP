@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,7 +50,6 @@ fun RegisterScreen(
     nav: NavHostController,
     onDone: (String) -> Unit
 ) {
-    // ---------- ViewModel con factory (Room + Application) ----------
     val context = LocalContext.current
     val app = context.applicationContext as Application
     val factory = remember { AppViewModelFactory(app) }
@@ -57,15 +58,21 @@ fun RegisterScreen(
     val state by vm.uiState.collectAsState()
     val isPreview = androidx.compose.ui.platform.LocalInspectionMode.current
 
-    // Ahora los campos los manejamos aquí, no dentro del ViewModel
     var nombre by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
     var pass2 by remember { mutableStateOf("") }
     var show1 by remember { mutableStateOf(false) }
     var show2 by remember { mutableStateOf(false) }
+    val qrResult = nav.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("qr_result")?.observeAsState()
 
-    // Cuando el registro sea exitoso en Room => llamar onDone(email)
+    LaunchedEffect(qrResult?.value) {
+        qrResult?.value?.let {
+            email = it
+            nav.currentBackStackEntry?.savedStateHandle?.remove<String>("qr_result")
+        }
+    }
+
     LaunchedEffect(state.success) {
         if (state.success) {
             if (!isPreview) {
@@ -75,7 +82,6 @@ fun RegisterScreen(
         }
     }
 
-    // ---------- Colores gamer que ya usabas ----------
     val dark = darkColorScheme(
         primary = Color(0xFF1E90FF),
         secondary = Color(0xFF39FF14),
@@ -110,7 +116,6 @@ fun RegisterScreen(
             ) {
                 Spacer(Modifier.height(8.dp))
 
-                // 👉 Nombre (lo usamos para llenar UsuarioEntity.nombre)
                 OutlinedTextField(
                     value = nombre,
                     onValueChange = { nombre = it },
@@ -126,7 +131,12 @@ fun RegisterScreen(
                     onValueChange = { email = it },
                     label = { Text("Correo") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        IconButton(onClick = { nav.navigate("qrScanner") }) {
+                             Icon(Icons.Default.QrCodeScanner, contentDescription = "Escanear QR")
+                        }
+                    }
                 )
 
                 Spacer(Modifier.height(12.dp))
@@ -161,7 +171,6 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // ---------- Errores desde el ViewModel (Room, validación, etc.) ----------
                 if (state.error != null) {
                     Spacer(Modifier.height(10.dp))
                     Text(
@@ -171,7 +180,6 @@ fun RegisterScreen(
                     )
                 }
 
-                // ---------- Loading ----------
                 if (state.isLoading) {
                     Spacer(Modifier.height(8.dp))
                     LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -181,16 +189,10 @@ fun RegisterScreen(
 
                 Button(
                     onClick = {
-                        // Validación básica antes de llamar al ViewModel
                         if (nombre.isBlank() || email.isBlank() || pass.isBlank() || pass2.isBlank()) {
-                            // Puedes mejorarlo mostrando error local si quieres
                             return@Button
                         }
                         if (pass != pass2) {
-                            // Lo ideal sería setear un error local,
-                            // pero por ahora se puede reutilizar el estado:
-                            // (esto requeriría exponer un método en VM o manejarlo aquí)
-                            // Para mantenerlo simple, dejamos que Room maneje lo demás.
                             return@Button
                         }
 

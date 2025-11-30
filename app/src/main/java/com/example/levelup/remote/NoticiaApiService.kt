@@ -1,6 +1,5 @@
 package com.example.levelup.remote
 
-import com.example.levelup.BuildConfig
 import com.example.levelup.data.model.NoticiasResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
