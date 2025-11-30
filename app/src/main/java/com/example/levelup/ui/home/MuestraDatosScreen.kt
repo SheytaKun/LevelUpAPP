@@ -60,18 +60,19 @@ fun MuestraDatosScreen(
                         }
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("profile") }) {
+                        IconButton(onClick = { /* navController.navigate("notificaciones") si algún día lo usas */ }) {
                             Icon(Icons.Default.Notifications, contentDescription = null, tint = OnSurface)
                         }
-                        IconButton(onClick = { navController.navigate("profile") }) {
-                            Icon(Icons.Default.Person, contentDescription = null, tint = OnSurface)
-                        }
+
+                        UserMenuAction(navController = navController)
+
                         IconButton(onClick = { navController.navigate("cart") }) {
                             Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = OnSurface)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark)
                 )
+
             },
             floatingActionButton = {
                 FloatingActionButton(

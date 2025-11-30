@@ -87,7 +87,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
 
     // CameraX
     implementation(libs.androidx.camera.core)

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.levelup.data.model.CartWithProduct
 import com.example.levelup.viewmodel.CartViewModel
 
@@ -29,11 +29,11 @@ private val OnSurface     = Color.White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    navController: NavController,
-    viewModel: CartViewModel
+    navController: NavHostController,
+    cartViewModel: CartViewModel
 ) {
-    val cartItems by viewModel.cartItems.collectAsState()
-    val totalPrice by viewModel.totalPrice.collectAsState()
+    val cartItems by cartViewModel.cartItems.collectAsState()
+    val totalPrice by cartViewModel.totalPrice.collectAsState()
 
     var couponCode by remember { mutableStateOf("") }
 
@@ -41,12 +41,12 @@ fun CartScreen(
         containerColor = BgBlack,
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
-                        "Carrito de Compras", 
-                        color = OnSurface, 
+                        "Carrito de Compras",
+                        color = OnSurface,
                         fontWeight = FontWeight.Bold
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
@@ -113,7 +113,7 @@ fun CartScreen(
                             color = PrimaryBlue,
                             fontWeight = FontWeight.Bold
                         )
-                        
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         LazyColumn(
@@ -125,12 +125,22 @@ fun CartScreen(
                             items(cartItems) { item ->
                                 CartItemRow(
                                     cartItem = item,
-                                    onIncrease = { viewModel.updateQuantity(item.cartItem, item.cartItem.quantity + 1) },
-                                    onDecrease = { viewModel.updateQuantity(item.cartItem, item.cartItem.quantity - 1) }
+                                    onIncrease = {
+                                        cartViewModel.updateQuantity(
+                                            item.cartItem,
+                                            item.cartItem.quantity + 1
+                                        )
+                                    },
+                                    onDecrease = {
+                                        cartViewModel.updateQuantity(
+                                            item.cartItem,
+                                            item.cartItem.quantity - 1
+                                        )
+                                    }
                                 )
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
                         Spacer(modifier = Modifier.height(16.dp))
@@ -188,7 +198,7 @@ fun CartScreen(
                                 color = SecondaryNeon
                             )
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
@@ -196,7 +206,7 @@ fun CartScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             OutlinedButton(
-                                onClick = { viewModel.clearCart() },
+                                onClick = { cartViewModel.clearCart() },
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     contentColor = Color(0xFFFF4444)
@@ -273,29 +283,29 @@ fun CartItemRow(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 IconButton(onClick = onDecrease) {
                     Icon(
-                        Icons.Default.Remove, 
+                        Icons.Default.Remove,
                         contentDescription = "Disminuir",
                         tint = Color.White
                     )
                 }
-                
+
                 Text(
                     text = cartItem.cartItem.quantity.toString(),
                     modifier = Modifier.padding(horizontal = 8.dp),
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                
+
                 IconButton(onClick = onIncrease) {
                     Icon(
-                        Icons.Default.Add, 
+                        Icons.Default.Add,
                         contentDescription = "Aumentar",
                         tint = Color.White
                     )

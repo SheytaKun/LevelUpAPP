@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.levelup.data.database.ProductoDataBase
 import com.example.levelup.data.repository.UsuarioRepository
+import com.example.levelup.data.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
             _uiState.value = result.fold(
                 onSuccess = { user ->
+                    SessionManager.usuarioActual = user
+
                     LoginUiState(
                         isLoading = false,
                         usuarioLogueado = user
@@ -43,9 +46,5 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 }
             )
         }
-    }
-
-    fun limpiarError() {
-        _uiState.value = _uiState.value.copy(error = null)
     }
 }
