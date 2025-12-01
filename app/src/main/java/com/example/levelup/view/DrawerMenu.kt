@@ -150,7 +150,7 @@ fun DrawerMenu(
                 label = "Ofertas",
                 icon = Icons.Default.LocalOffer
             ) {
-                navController.navigate("catalogo?categoria=${Uri.encode("Ofertas")}") {
+                navController.navigate("offers") {
                     launchSingleTop = true
                 }
             }

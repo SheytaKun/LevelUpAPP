@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductoDao {
 
+    @Query("""
+        UPDATE productos 
+        SET stock = stock - :cantidad 
+        WHERE codigo = :codigo AND stock >= :cantidad
+    """)
+    suspend fun disminuirStock(codigo: String, cantidad: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarProducto(producto: Producto)
 
@@ -40,4 +47,8 @@ interface ProductoDao {
 
     @Query("UPDATE productos SET stock = :nuevoStock WHERE id = :id")
     suspend fun actualizarStock(id: Int, nuevoStock: Int)
+
+    // ✅ NUEVO: CONTAR PRODUCTOS EN LA TABLA
+    @Query("SELECT COUNT(*) FROM productos")
+    suspend fun contarProductos(): Int
 }

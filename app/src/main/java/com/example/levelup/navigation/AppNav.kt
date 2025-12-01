@@ -16,6 +16,7 @@ import com.example.levelup.ui.cart.CartScreen
 import com.example.levelup.ui.checkout.CheckoutScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
+import com.example.levelup.ui.newproducts.NewProductsScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.ui.profile.ProfileScreen
 import com.example.levelup.ui.profile.AccountSettingsScreen
@@ -24,12 +25,17 @@ import com.example.levelup.view.ProductoFormScreen
 import com.example.levelup.view.QrScannerScreen
 import com.example.levelup.viewmodel.CartViewModel
 import com.example.levelup.viewmodel.QrViewModel
+import com.example.levelup.viewmodel.OffersViewModel
+import com.example.levelup.ui.offers.OffersScreen
+import com.example.levelup.ui.special.SpecialDiscountsScreen
+import com.example.levelup.ui.top.TopBuysScreen   // 👈 NUEVO IMPORT
 
 @Composable
 fun AppNav(
     navController: NavHostController,
     qrViewModel: QrViewModel,
     cartViewModel: CartViewModel,
+    offersViewModel: OffersViewModel,
     hasCameraPermission: Boolean,
     onRequestPermission: () -> Unit
 ) {
@@ -38,20 +44,24 @@ fun AppNav(
         android.util.Log.d("NAV", "AppNav nav=${System.identityHashCode(navController)}")
     }
 
-    val login           = "login"
-    val home            = "home"
-    val drawer          = "drawer/{username}"
-    val catalogo        = "catalogo?categoria={categoria}"
-    val product         = "product/{id}"
-    val cart            = "cart"
-    val checkout        = "checkout"
-    val profile         = "profile"
-    val accountSettings = "account_settings"
-    val blog            = "blog"
-    val events          = "events"
-    val register        = "register"
-    val productForm     = "producto_form/{nombre}/{precio}"
-    val qrScanner       = "qrScanner"
+    val login            = "login"
+    val home             = "home"
+    val drawer           = "drawer/{username}"
+    val catalogo         = "catalogo?categoria={categoria}"
+    val offers           = "offers"
+    val specialDiscounts = "special_discounts"
+    val topBuys          = "top_buys"
+    val newProducts      = "new_products"
+    val product          = "product/{id}"
+    val cart             = "cart"
+    val checkout         = "checkout"
+    val profile          = "profile"
+    val accountSettings  = "account_settings"
+    val blog             = "blog"
+    val events           = "events"
+    val register         = "register"
+    val productForm      = "producto_form/{nombre}/{precio}"
+    val qrScanner        = "qrScanner"
 
     NavHost(navController = navController, startDestination = home) {
 
@@ -95,6 +105,40 @@ fun AppNav(
             CatalogScreen(
                 navController = navController,
                 categoria = categoria,
+                cartViewModel = cartViewModel
+            )
+        }
+
+        // ✅ RUTA DE OFERTAS
+        composable(offers) {
+            OffersScreen(
+                navController = navController,
+                cartViewModel = cartViewModel,
+                offersViewModel = offersViewModel
+            )
+        }
+
+        // ✅ RUTA DE DESCUENTOS ESPECIALES
+        composable(specialDiscounts) {
+            SpecialDiscountsScreen(
+                navController = navController,
+                cartViewModel = cartViewModel,
+                offersViewModel = offersViewModel
+            )
+        }
+
+        // ✅ RUTA DE TOP COMPRAS
+        composable(topBuys) {
+            TopBuysScreen(
+                navController = navController,
+                cartViewModel = cartViewModel,
+                offersViewModel = offersViewModel
+            )
+        }
+
+        composable(newProducts) {
+            NewProductsScreen(
+                navController = navController,
                 cartViewModel = cartViewModel
             )
         }

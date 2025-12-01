@@ -243,8 +243,12 @@ private fun HighlightsSection(navController: NavHostController) {
                 subtitle = "Promos activas",
                 accentColor = SecondaryNeon,
                 imageRes = R.drawable.oferta_gamer,
-                modifier = Modifier.weight(1f).height(170.dp)
-            ) { navController.navigate("catalogo?categoria=${Uri.encode("Ofertas")}") }
+                modifier = Modifier
+                    .weight(1f)
+                    .height(170.dp)
+            ) {
+                navController.navigate("offers")
+            }
 
             BigInfoCard(
                 title = "Descuentos Especiales",
@@ -252,7 +256,10 @@ private fun HighlightsSection(navController: NavHostController) {
                 accentColor = PrimaryBlue,
                 imageRes = R.drawable.descuento,
                 modifier = Modifier.weight(1f).height(170.dp)
-            ) { navController.navigate("catalogo?categoria=${Uri.encode("Descuentos Especiales")}") }
+            ) {
+                navController.navigate("special_discounts")
+            }
+
         }
 
         Row(
@@ -264,16 +271,23 @@ private fun HighlightsSection(navController: NavHostController) {
                 subtitle = "Lo más vendido",
                 accentColor = Color(0xFFFFC107),
                 imageRes = R.drawable.top,
-                modifier = Modifier.weight(1f).height(170.dp)
-            ) { navController.navigate("catalogo?categoria=${Uri.encode("Top Ventas")}") }
-
+                modifier = Modifier
+                    .weight(1f)
+                    .height(170.dp)
+            ) {
+                navController.navigate("top_buys")
+            }
             BigInfoCard(
                 title = "Nuevos Productos",
                 subtitle = "Recién agregados",
                 accentColor = Color(0xFF9C27B0),
                 imageRes = R.drawable.nuevo,
-                modifier = Modifier.weight(1f).height(170.dp)
-            ) { navController.navigate("catalogo?categoria=${Uri.encode("Nuevos Productos")}") }
+                modifier = Modifier
+                    .weight(1f)
+                    .height(170.dp)
+            ) {
+                navController.navigate("new_products")   // 👈 RUTA CORRECTA
+            }
         }
     }
 }

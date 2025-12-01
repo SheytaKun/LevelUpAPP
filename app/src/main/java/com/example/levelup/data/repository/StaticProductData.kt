@@ -94,7 +94,7 @@ object StaticProductData {
             precio = 14990,
             stock = 25,
             imagenUrl = "file:///C:/Users/crist/OneDrive/Documentos/GitHub/LevelUpProyect/public/assets/img/poleraLevel.png"
-        )
+        ),
     )
 
     fun byCategory(cat: String?): List<Producto> =

@@ -24,7 +24,6 @@ class CartViewModel(
         items.sumOf { it.product.precio.toDouble() * it.cartItem.quantity }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0)
 
-
     fun addToCartByCode(codigo: String, quantity: Int = 1) {
         viewModelScope.launch {
             val producto = productoRepository.obtenerProductoPorCodigo(codigo)
@@ -42,6 +41,22 @@ class CartViewModel(
 
     fun clearCart() {
         viewModelScope.launch {
+            cartRepository.clearCart()
+        }
+    }
+
+    fun confirmarCompra() {
+        viewModelScope.launch {
+            // 1) Snapshot actual del carrito
+            val items = cartItems.value
+
+            items.forEach { item ->
+                productoRepository.disminuirStock(
+                    codigo = item.product.codigo,
+                    cantidad = item.cartItem.quantity
+                )
+            }
+
             cartRepository.clearCart()
         }
     }

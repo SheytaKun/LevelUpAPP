@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 class ProductoRepository(private val productoDao: ProductoDao) {
 
+    suspend fun disminuirStock(codigo: String, cantidad: Int) {
+        productoDao.disminuirStock(codigo, cantidad)
+    }
     suspend fun insertarProducto(producto: Producto) {
         productoDao.insertarProducto(producto)
     }
@@ -41,4 +44,7 @@ class ProductoRepository(private val productoDao: ProductoDao) {
     suspend fun actualizarStock(id: Int, nuevoStock: Int) {
         productoDao.actualizarStock(id, nuevoStock)
     }
+
+    fun obtenerOfertas() = productoDao.obtenerPorCategoria("Ofertas")
+
 }

@@ -14,18 +14,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.levelup.data.repository.StaticProductData
+import com.example.levelup.data.repository.StaticOfferData
+import com.example.levelup.data.repository.StaticSpecialDiscountData
 import com.example.levelup.viewmodel.CartViewModel
 import java.text.NumberFormat
 import java.util.Locale
-import androidx.compose.ui.graphics.Color
 
-// === COLORES REUTILIZADOS DEL HOME ===
 private val PrimaryBlue   = Color(0xFF1E90FF)
 private val SecondaryNeon = Color(0xFF39FF14)
 private val BgBlack       = Color(0xFF000000)
@@ -39,8 +41,49 @@ fun ProductDetailScreen(
     codigo: String,
     cartViewModel: CartViewModel
 ) {
-    val product = StaticProductData.findByCode(codigo)
+    // 1) BUSCAR EN CATÁLOGO NORMAL
+    val fromCatalog = StaticProductData.findByCode(codigo)
+    // 2) SI NO ESTÁ, BUSCAR EN OFERTAS
+    val fromOffers  = StaticOfferData.offers.find { it.codigo == codigo }
+    // 3) SI NO ESTÁ, BUSCAR EN DESCUENTOS ESPECIALES
+    val fromSpecial = StaticSpecialDiscountData.products.find { it.codigo == codigo }
+
+    val product = fromCatalog ?: fromOffers ?: fromSpecial
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+    // ¿De dónde viene este producto?
+    val esOferta = fromOffers != null
+    val esDescuentoEspecial = fromSpecial != null
+
+    // Descuento y precio original según el origen
+    val descuento: Int?
+    val precioOriginal: Int?
+
+    if (product != null) {
+        when {
+            esOferta -> {
+                val d = StaticOfferData.descuentos[product.codigo]
+                descuento = d
+                precioOriginal = if (d != null && d > 0) {
+                    StaticOfferData.precioOriginal(product.precio, d)
+                } else null
+            }
+            esDescuentoEspecial -> {
+                val d = StaticSpecialDiscountData.descuentos[product.codigo]
+                descuento = d
+                precioOriginal = if (d != null && d > 0) {
+                    StaticSpecialDiscountData.precioOriginal(product.precio, d)
+                } else null
+            }
+            else -> {
+                descuento = null
+                precioOriginal = null
+            }
+        }
+    } else {
+        descuento = null
+        precioOriginal = null
+    }
 
     Scaffold(
         containerColor = BgBlack,
@@ -119,6 +162,36 @@ fun ProductDetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
+
+                        // BADGE DE TIPO
+                        if (esOferta || esDescuentoEspecial) {
+                            val badgeText = when {
+                                esDescuentoEspecial -> "DESCUENTO ESPECIAL"
+                                esOferta -> "OFERTA"
+                                else -> ""
+                            }
+                            val badgeColor = when {
+                                esDescuentoEspecial -> Color.Magenta
+                                esOferta -> Color.Red
+                                else -> SurfaceDark
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .background(badgeColor, RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = badgeText,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Spacer(Modifier.height(4.dp))
+                        }
+
                         Text(
                             product.nombre,
                             style = MaterialTheme.typography.headlineSmall,
@@ -139,12 +212,29 @@ fun ProductDetailScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = SecondaryNeon
                         )
-                        Text(
-                            "Precio: ${moneda.format(product.precio)}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = PrimaryBlue,
-                            fontWeight = FontWeight.Bold
-                        )
+
+                        // ==== PRECIO NORMAL VS DESCUENTO ====
+                        if (precioOriginal != null && descuento != null && descuento > 0) {
+                            Text(
+                                text = "Antes: ${moneda.format(precioOriginal)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray,
+                                textDecoration = TextDecoration.LineThrough
+                            )
+                            Text(
+                                text = "Ahora: ${moneda.format(product.precio)}  (-$descuento%)",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = PrimaryBlue,
+                                fontWeight = FontWeight.Bold
+                            )
+                        } else {
+                            Text(
+                                "Precio: ${moneda.format(product.precio)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = PrimaryBlue,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
 
                     Text(
@@ -156,7 +246,7 @@ fun ProductDetailScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    // ===== BOTONES =====
+                    // ===== BOTÓN AGREGAR AL CARRITO =====
                     Button(
                         onClick = {
                             cartViewModel.addToCartByCode(product.codigo)
@@ -173,6 +263,7 @@ fun ProductDetailScreen(
                         Text("Agregar al carrito")
                     }
 
+                    // ===== BOTONES INFERIORES =====
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -204,7 +295,6 @@ fun ProductDetailScreen(
                         ) {
                             Text("Volver")
                         }
-
                     }
                 }
             }

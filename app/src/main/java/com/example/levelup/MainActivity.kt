@@ -14,17 +14,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
-import com.example.levelup.viewmodel.QrViewModel
-import com.example.levelup.utils.CameraPermissionHelper
-import com.example.levelup.data.repository.StaticProductData
+import androidx.navigation.compose.rememberNavController
 import com.example.levelup.data.database.ProductoDataBase
 import com.example.levelup.data.repository.CartRepository
 import com.example.levelup.data.repository.ProductoRepository
+import com.example.levelup.data.repository.StaticOfferData
+import com.example.levelup.data.repository.StaticProductData
+import com.example.levelup.data.repository.StaticSpecialDiscountData
 import com.example.levelup.navigation.AppNav
+import com.example.levelup.utils.CameraPermissionHelper
 import com.example.levelup.viewmodel.CartViewModel
 import com.example.levelup.viewmodel.CartViewModelFactory
+import com.example.levelup.viewmodel.OffersViewModel
+import com.example.levelup.viewmodel.OffersViewModelFactory
+import com.example.levelup.viewmodel.QrViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -35,6 +39,13 @@ class MainActivity : ComponentActivity() {
         val db = ProductoDataBase.getDataBase(applicationContext)
         CartViewModelFactory(
             CartRepository(db.cartDao()),
+            ProductoRepository(db.productoDao())
+        )
+    }
+
+    private val offersViewModel: OffersViewModel by viewModels {
+        val db = ProductoDataBase.getDataBase(applicationContext)
+        OffersViewModelFactory(
             ProductoRepository(db.productoDao())
         )
     }
@@ -56,13 +67,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val db = ProductoDataBase.getDataBase(applicationContext)
+
+        // ===== SOLO INSERTA PRODUCTOS + OFERTAS + DESCUENTOS ESPECIALES SI LA TABLA ESTÁ VACÍA =====
         lifecycleScope.launch {
             try {
-                db.productoDao().insertarProductos(StaticProductData.products)
+                val count = db.productoDao().contarProductos()
+                if (count == 0) {
+                    db.productoDao().insertarProductos(
+                        StaticProductData.products +
+                                StaticOfferData.offers +
+                                StaticSpecialDiscountData.products
+                    )
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+        // ===========================================================================================
 
         hasCameraPermission = CameraPermissionHelper.hasCameraPermission(this)
 
@@ -79,8 +100,11 @@ class MainActivity : ComponentActivity() {
                         navController = nav,
                         qrViewModel = qrViewModel,
                         cartViewModel = cartViewModel,
+                        offersViewModel = offersViewModel,
                         hasCameraPermission = hasCameraPermission,
-                        onRequestPermission = { requestPermissionLauncher.launch(Manifest.permission.CAMERA) }
+                        onRequestPermission = {
+                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
                     )
                 }
             }
