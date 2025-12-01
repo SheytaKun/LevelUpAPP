@@ -100,7 +100,7 @@ fun DrawerMenu(
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         Spacer(Modifier.height(16.dp))
 
         Row(
@@ -184,10 +184,10 @@ fun DrawerMenu(
             }
 
             DrawerItemGamer(
-                label = "Eventos",
+                label = "Nosotros",
                 icon = Icons.Default.Map
             ) {
-                navController.navigate("events")
+                navController.navigate("nosotros")
             }
         }
     }

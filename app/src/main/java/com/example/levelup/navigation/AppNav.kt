@@ -17,6 +17,7 @@ import com.example.levelup.ui.checkout.CheckoutScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.newproducts.NewProductsScreen
+import com.example.levelup.ui.nosotros.NosotrosScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.ui.profile.ProfileScreen
 import com.example.levelup.ui.profile.AccountSettingsScreen
@@ -62,6 +63,7 @@ fun AppNav(
     val blog             = "blog"
     val events           = "events"
     val register         = "register"
+    val nosotros         = "nosotros"
     val productForm      = "producto_form/{nombre}/{precio}"
     val qrScanner        = "qrScanner"
 
@@ -143,6 +145,12 @@ fun AppNav(
             NewProductsScreen(
                 navController = navController,
                 cartViewModel = cartViewModel
+            )
+        }
+
+        composable(nosotros) {
+            NosotrosScreen(
+                navController = navController
             )
         }
 
