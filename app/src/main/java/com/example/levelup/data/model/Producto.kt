@@ -14,4 +14,5 @@ data class Producto(
     val descripcion: String,
     val precio: Int,
     val stock: Int,
+    val imagenUrl: String
 )

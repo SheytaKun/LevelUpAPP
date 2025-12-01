@@ -1,20 +1,36 @@
 package com.example.levelup.ui.product
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.levelup.data.repository.StaticProductData
 import com.example.levelup.viewmodel.CartViewModel
 import java.text.NumberFormat
 import java.util.Locale
+import androidx.compose.ui.graphics.Color
+
+// === COLORES REUTILIZADOS DEL HOME ===
+private val PrimaryBlue   = Color(0xFF1E90FF)
+private val SecondaryNeon = Color(0xFF39FF14)
+private val BgBlack       = Color(0xFF000000)
+private val SurfaceDark   = Color(0xFF18181C)
+private val OnSurface     = Color.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,53 +43,168 @@ fun ProductDetailScreen(
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
     Scaffold(
+        containerColor = BgBlack,
         topBar = {
             TopAppBar(
-                title = { Text(product?.nombre ?: "Producto") },
+                title = {
+                    Text(
+                        product?.nombre ?: "Producto",
+                        color = OnSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = OnSurface
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate("cart") }) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "Ir al carrito")
+                        Icon(
+                            Icons.Default.ShoppingCart,
+                            contentDescription = "Ir al carrito",
+                            tint = OnSurface
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = SurfaceDark
+                )
             )
         }
     ) { inner ->
-        Box(modifier = Modifier.padding(inner).fillMaxSize().padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(inner)
+                .fillMaxSize()
+                .background(BgBlack)
+                .padding(16.dp)
+        ) {
             if (product == null) {
-                Text("Producto no encontrado")
+                Text(
+                    "Producto no encontrado",
+                    color = OnSurface
+                )
             } else {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(product.nombre, style = MaterialTheme.typography.headlineSmall)
-                    Text("Código: ${product.codigo}", style = MaterialTheme.typography.bodySmall)
-                    Text("Categoría: ${product.categoria}", style = MaterialTheme.typography.bodyMedium)
-                    Text("Stock: ${product.stock}", style = MaterialTheme.typography.bodyMedium)
-                    Text("Precio: ${moneda.format(product.precio)}", style = MaterialTheme.typography.titleMedium)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+
+                    // ===== TARJETA CON IMAGEN =====
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        AsyncImage(
+                            model = product.imagenUrl,
+                            contentDescription = product.nombre,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    // ===== INFORMACIÓN DEL PRODUCTO =====
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            product.nombre,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = OnSurface
+                        )
+                        Text(
+                            "Código: ${product.codigo}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = OnSurface.copy(alpha = 0.8f)
+                        )
+                        Text(
+                            "Categoría: ${product.categoria}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = OnSurface
+                        )
+                        Text(
+                            "Stock: ${product.stock}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = SecondaryNeon
+                        )
+                        Text(
+                            "Precio: ${moneda.format(product.precio)}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Text(
+                        product.descripcion,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = OnSurface,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
                     Spacer(Modifier.height(8.dp))
-                    Text(product.descripcion, style = MaterialTheme.typography.bodyLarge)
-                    Spacer(Modifier.height(16.dp))
+
+                    // ===== BOTONES =====
                     Button(
                         onClick = {
                             cartViewModel.addToCartByCode(product.codigo)
                             navController.navigate("cart")
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = SecondaryNeon,
+                            contentColor = BgBlack
+                        ),
+                        shape = RoundedCornerShape(50)
                     ) {
                         Text("Agregar al carrito")
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Button(onClick = {
-                            navController.navigate("producto_form/${Uri.encode(product.nombre)}/${product.precio}")
-                        }) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                navController.navigate(
+                                    "producto_form/${Uri.encode(product.nombre)}/${product.precio}"
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryBlue,
+                                contentColor = OnSurface
+                            ),
+                            shape = RoundedCornerShape(50)
+                        ) {
                             Text("Editar")
                         }
-                        OutlinedButton(onClick = { navController.popBackStack() }) {
+
+                        OutlinedButton(
+                            onClick = { navController.popBackStack() },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = SecondaryNeon
+                            ),
+                            shape = RoundedCornerShape(50),
+                            border = BorderStroke(2.dp, SecondaryNeon)
+                        ) {
                             Text("Volver")
                         }
+
                     }
                 }
             }
