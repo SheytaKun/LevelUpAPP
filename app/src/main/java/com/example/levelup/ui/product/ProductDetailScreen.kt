@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.example.levelup.data.repository.StaticProductData
 import com.example.levelup.data.repository.StaticOfferData
 import com.example.levelup.data.repository.StaticSpecialDiscountData
+import com.example.levelup.data.repository.StaticNewProductsData   // 👈 NUEVO IMPORT
 import com.example.levelup.viewmodel.CartViewModel
 import java.text.NumberFormat
 import java.util.Locale
@@ -47,13 +48,16 @@ fun ProductDetailScreen(
     val fromOffers  = StaticOfferData.offers.find { it.codigo == codigo }
     // 3) SI NO ESTÁ, BUSCAR EN DESCUENTOS ESPECIALES
     val fromSpecial = StaticSpecialDiscountData.products.find { it.codigo == codigo }
+    // 4) SI NO ESTÁ, BUSCAR EN NUEVOS PRODUCTOS
+    val fromNew     = StaticNewProductsData.newProducts.find { it.codigo == codigo }
 
-    val product = fromCatalog ?: fromOffers ?: fromSpecial
+    val product = fromCatalog ?: fromOffers ?: fromSpecial ?: fromNew
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
     // ¿De dónde viene este producto?
     val esOferta = fromOffers != null
     val esDescuentoEspecial = fromSpecial != null
+    val esNuevo = fromNew != null
 
     // Descuento y precio original según el origen
     val descuento: Int?
@@ -76,6 +80,7 @@ fun ProductDetailScreen(
                 } else null
             }
             else -> {
+                // Nuevos productos y catálogo normal no tienen descuento
                 descuento = null
                 precioOriginal = null
             }
@@ -164,15 +169,17 @@ fun ProductDetailScreen(
                     ) {
 
                         // BADGE DE TIPO
-                        if (esOferta || esDescuentoEspecial) {
+                        if (esOferta || esDescuentoEspecial || esNuevo) {
                             val badgeText = when {
                                 esDescuentoEspecial -> "DESCUENTO ESPECIAL"
                                 esOferta -> "OFERTA"
+                                esNuevo -> "NUEVO"
                                 else -> ""
                             }
                             val badgeColor = when {
                                 esDescuentoEspecial -> Color.Magenta
                                 esOferta -> Color.Red
+                                esNuevo -> Color(0xFF9C27B0) // morado para "NUEVO"
                                 else -> SurfaceDark
                             }
 

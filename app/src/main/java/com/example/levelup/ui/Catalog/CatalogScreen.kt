@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.levelup.data.repository.StaticProductData
+import com.example.levelup.data.repository.StaticOfferData
+import com.example.levelup.data.repository.StaticSpecialDiscountData
+import com.example.levelup.data.repository.StaticNewProductsData
 import com.example.levelup.viewmodel.CartViewModel
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -42,8 +45,24 @@ fun CatalogScreen(
     categoria: String?,
     cartViewModel: CartViewModel
 ) {
-    val productos = StaticProductData.byCategory(categoria)
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+    // ✅ AHORA EL CATÁLOGO PUEDE MOSTRAR TODO
+    val productos = remember(categoria) {
+        when {
+            categoria.isNullOrBlank() || categoria == "Todas" -> {
+                // TODO el catálogo: normales + ofertas + especiales + nuevos
+                StaticProductData.products +
+                        StaticOfferData.offers +
+                        StaticSpecialDiscountData.products +
+                        StaticNewProductsData.newProducts
+            }
+            else -> {
+                // Por categoría específica seguimos usando los normales
+                StaticProductData.byCategory(categoria)
+            }
+        }
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -161,7 +180,7 @@ fun CatalogScreen(
                                         color = PrimaryBlue
                                     )
 
-                                    // === STOCK ===
+                                    // === STOCK (ESTÁTICO) ===
                                     Text(
                                         "Stock: ${p.stock}",
                                         style = MaterialTheme.typography.bodySmall,
