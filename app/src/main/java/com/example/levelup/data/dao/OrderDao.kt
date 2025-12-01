@@ -7,6 +7,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.levelup.data.model.OrderEntity
 import com.example.levelup.data.model.OrderItemEntity
+import com.example.levelup.data.model.OrderWithItems
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
@@ -26,4 +28,14 @@ interface OrderDao {
 
     @Query("SELECT * FROM orders WHERE orderId = :orderId")
     suspend fun getOrderById(orderId: Long): OrderEntity?
+
+    @Query("SELECT * FROM orders ORDER BY date DESC")
+    fun getAllOrders(): Flow<List<OrderEntity>>
+
+    @Query("SELECT * FROM orders WHERE userId = :userId ORDER BY date DESC")
+    fun getOrdersByUserId(userId: Int): Flow<List<OrderEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM orders WHERE userId = :userId ORDER BY date DESC")
+    fun getOrdersWithItemsByUserId(userId: Int): Flow<List<OrderWithItems>>
 }

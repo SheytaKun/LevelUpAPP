@@ -116,7 +116,7 @@ fun ProfileScreen(
                             fontWeight = FontWeight.Bold
                         )
 
-                        IconButton(onClick = { /* Notificaciones o ajustes generales */ }) {
+                        IconButton(onClick = { navController.navigate("notifications") }) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Notificaciones",
@@ -212,7 +212,7 @@ fun ProfileScreen(
                     ProfileOption(
                         icon = Icons.Default.Notifications,
                         title = "Notificaciones",
-                        onClick = { /* TODO */ }
+                        onClick = { navController.navigate("notifications") }
                     )
                     ProfileOption(
                         icon = Icons.Default.Wifi,

@@ -60,7 +60,7 @@ fun MuestraDatosScreen(
                         }
                     },
                     actions = {
-                        IconButton(onClick = { /* navController.navigate("notificaciones") si algún día lo usas */ }) {
+                        IconButton(onClick = { navController.navigate("notifications") }) {
                             Icon(Icons.Default.Notifications, contentDescription = null, tint = OnSurface)
                         }
 

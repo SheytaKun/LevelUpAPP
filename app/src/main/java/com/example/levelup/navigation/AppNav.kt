@@ -17,6 +17,7 @@ import com.example.levelup.ui.checkout.CheckoutScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.newproducts.NewProductsScreen
+import com.example.levelup.ui.notifications.NotificationsScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.ui.profile.ProfileScreen
 import com.example.levelup.ui.profile.AccountSettingsScreen
@@ -28,7 +29,7 @@ import com.example.levelup.viewmodel.QrViewModel
 import com.example.levelup.viewmodel.OffersViewModel
 import com.example.levelup.ui.offers.OffersScreen
 import com.example.levelup.ui.special.SpecialDiscountsScreen
-import com.example.levelup.ui.top.TopBuysScreen   // 👈 NUEVO IMPORT
+import com.example.levelup.ui.top.TopBuysScreen
 
 @Composable
 fun AppNav(
@@ -62,6 +63,7 @@ fun AppNav(
     val register         = "register"
     val productForm      = "producto_form/{nombre}/{precio}"
     val qrScanner        = "qrScanner"
+    val notifications    = "notifications"
 
     NavHost(navController = navController, startDestination = home) {
 
@@ -226,6 +228,12 @@ fun AppNav(
                 viewModel = qrViewModel,
                 hasCameraPermission = hasCameraPermission,
                 onRequestPermission = onRequestPermission,
+                navController = navController
+            )
+        }
+
+        composable(notifications) {
+            NotificationsScreen(
                 navController = navController
             )
         }

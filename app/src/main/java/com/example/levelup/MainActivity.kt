@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
 
         val db = ProductoDataBase.getDataBase(applicationContext)
 
-        // ===== SOLO INSERTA PRODUCTOS + OFERTAS + DESCUENTOS ESPECIALES SI LA TABLA ESTÁ VACÍA =====
         lifecycleScope.launch {
             try {
                 val count = db.productoDao().contarProductos()
@@ -83,7 +82,7 @@ class MainActivity : ComponentActivity() {
                 e.printStackTrace()
             }
         }
-        // ===========================================================================================
+
 
         hasCameraPermission = CameraPermissionHelper.hasCameraPermission(this)
 

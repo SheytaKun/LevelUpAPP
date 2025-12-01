@@ -4,7 +4,9 @@ import com.example.levelup.data.dao.OrderDao
 import com.example.levelup.data.dao.ProductoDao
 import com.example.levelup.data.model.OrderEntity
 import com.example.levelup.data.model.OrderItemEntity
+import com.example.levelup.data.model.OrderWithItems
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
@@ -64,6 +66,18 @@ class OrderRepository(
             
             transactionCode
         }
+    }
+
+    fun getOrdersByUserId(userId: Int): Flow<List<OrderEntity>> {
+        return orderDao.getOrdersByUserId(userId)
+    }
+
+    fun getOrdersWithItemsByUserId(userId: Int): Flow<List<OrderWithItems>> {
+        return orderDao.getOrdersWithItemsByUserId(userId)
+    }
+    
+    fun getAllOrders(): Flow<List<OrderEntity>> {
+        return orderDao.getAllOrders()
     }
 }
 
