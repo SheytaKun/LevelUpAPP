@@ -11,9 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,11 +19,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.levelup.data.repository.StaticProductData
-import com.example.levelup.data.repository.StaticOfferData
-import com.example.levelup.data.repository.StaticSpecialDiscountData
-import com.example.levelup.data.repository.StaticNewProductsData
+import com.example.levelup.data.model.Producto
 import com.example.levelup.viewmodel.CartViewModel
+import com.example.levelup.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -43,33 +39,20 @@ private val OnSurface     = Color.White
 fun CatalogScreen(
     navController: NavHostController,
     categoria: String?,
+    productoViewModel: ProductoViewModel,
     cartViewModel: CartViewModel
 ) {
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
-
-    // ✅ AHORA EL CATÁLOGO PUEDE MOSTRAR TODO
-    val productos = remember(categoria) {
-        when {
-            categoria.isNullOrBlank() || categoria == "Todas" -> {
-                // TODO el catálogo: normales + ofertas + especiales + nuevos
-                StaticProductData.products +
-                        StaticOfferData.offers +
-                        StaticSpecialDiscountData.products +
-                        StaticNewProductsData.newProducts
-            }
-            else -> {
-                // Por categoría específica seguimos usando los normales
-                StaticProductData.byCategory(categoria)
-            }
-        }
-    }
-
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    // ✅ Traer productos DESDE ROOM según categoría
+    val productosFlow = productoViewModel.productosPorCategoria(categoria)
+    val productos by productosFlow.collectAsState(initial = emptyList())
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = BgBlack, // 👈 FONDO NEGRO IGUAL AL HOME
+        containerColor = BgBlack,
         topBar = {
             TopAppBar(
                 title = {
@@ -118,6 +101,7 @@ fun CatalogScreen(
                 .background(BgBlack)
                 .padding(12.dp)
         ) {
+
             if (productos.isEmpty()) {
                 Text(
                     "No hay productos para mostrar",
@@ -126,10 +110,8 @@ fun CatalogScreen(
                 )
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(productos) { p: Producto ->
 
-                    items(productos) { p ->
-
-                        // === CARD ESTILO HOME ===
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -146,7 +128,7 @@ fun CatalogScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                // === IMAGEN ===
+                                // === IMAGEN DESDE ROOM ===
                                 AsyncImage(
                                     model = p.imagenUrl,
                                     contentDescription = p.nombre,
@@ -158,9 +140,7 @@ fun CatalogScreen(
 
                                 Spacer(Modifier.width(12.dp))
 
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
+                                Column(modifier = Modifier.weight(1f)) {
 
                                     Text(
                                         p.nombre,
@@ -180,7 +160,6 @@ fun CatalogScreen(
                                         color = PrimaryBlue
                                     )
 
-                                    // === STOCK (ESTÁTICO) ===
                                     Text(
                                         "Stock: ${p.stock}",
                                         style = MaterialTheme.typography.bodySmall,
@@ -189,7 +168,6 @@ fun CatalogScreen(
 
                                     Spacer(Modifier.height(8.dp))
 
-                                    // === BOTÓN ===
                                     Button(
                                         onClick = {
                                             cartViewModel.addToCartByCode(p.codigo)

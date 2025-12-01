@@ -2,7 +2,6 @@ package com.example.levelup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.levelup.data.repository.StaticProductData
 import com.example.levelup.data.model.Producto
 import com.example.levelup.data.repository.ProductoRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +14,13 @@ class ProductoViewModel(
     private val repository: ProductoRepository
 ) : ViewModel() {
 
+    // Todos los productos en un StateFlow para usar en Compose
     val productos: StateFlow<List<Producto>> = repository.obtenerProductos()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = emptyList()
+        )
 
     fun productosPorCategoria(categoria: String?): Flow<List<Producto>> {
         return if (categoria.isNullOrBlank()) {
@@ -28,17 +32,5 @@ class ProductoViewModel(
 
     suspend fun getProductoPorCodigo(codigo: String): Producto? {
         return repository.obtenerProductoPorCodigo(codigo)
-    }
-
-    fun seedDatabaseIfEmpty() {
-         viewModelScope.launch {
-            val staticProducts = StaticProductData.products
-            staticProducts.forEach { staticProd ->
-                 val existing = repository.obtenerProductoPorCodigo(staticProd.codigo)
-                 if (existing == null) {
-                     repository.insertarProducto(staticProd)
-                 }
-            }
-         }
     }
 }

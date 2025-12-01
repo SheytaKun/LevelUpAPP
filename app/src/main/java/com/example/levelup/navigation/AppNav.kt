@@ -17,7 +17,6 @@ import com.example.levelup.ui.checkout.CheckoutScreen
 import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.newproducts.NewProductsScreen
-import com.example.levelup.ui.notifications.NotificationsScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.ui.profile.ProfileScreen
 import com.example.levelup.ui.profile.AccountSettingsScreen
@@ -27,6 +26,7 @@ import com.example.levelup.view.QrScannerScreen
 import com.example.levelup.viewmodel.CartViewModel
 import com.example.levelup.viewmodel.QrViewModel
 import com.example.levelup.viewmodel.OffersViewModel
+import com.example.levelup.viewmodel.ProductoViewModel       // 👈 IMPORTANTE
 import com.example.levelup.ui.offers.OffersScreen
 import com.example.levelup.ui.special.SpecialDiscountsScreen
 import com.example.levelup.ui.top.TopBuysScreen
@@ -37,6 +37,7 @@ fun AppNav(
     qrViewModel: QrViewModel,
     cartViewModel: CartViewModel,
     offersViewModel: OffersViewModel,
+    productoViewModel: ProductoViewModel,          // 👈 NUEVO PARÁMETRO
     hasCameraPermission: Boolean,
     onRequestPermission: () -> Unit
 ) {
@@ -63,7 +64,6 @@ fun AppNav(
     val register         = "register"
     val productForm      = "producto_form/{nombre}/{precio}"
     val qrScanner        = "qrScanner"
-    val notifications    = "notifications"
 
     NavHost(navController = navController, startDestination = home) {
 
@@ -107,6 +107,7 @@ fun AppNav(
             CatalogScreen(
                 navController = navController,
                 categoria = categoria,
+                productoViewModel = productoViewModel,   // 👈 AHORA SÍ
                 cartViewModel = cartViewModel
             )
         }
@@ -154,7 +155,8 @@ fun AppNav(
             ProductDetailScreen(
                 navController = navController,
                 codigo = Uri.decode(id),
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                productoViewModel = productoViewModel       // 👈 TAMBIÉN AQUÍ
             )
         }
 
@@ -228,12 +230,6 @@ fun AppNav(
                 viewModel = qrViewModel,
                 hasCameraPermission = hasCameraPermission,
                 onRequestPermission = onRequestPermission,
-                navController = navController
-            )
-        }
-
-        composable(notifications) {
-            NotificationsScreen(
                 navController = navController
             )
         }

@@ -36,7 +36,11 @@ interface ProductoDao {
     @Query("SELECT * FROM productos WHERE categoria = :categoria ORDER BY nombre ASC")
     fun obtenerPorCategoria(categoria: String): Flow<List<Producto>>
 
-    @Query("SELECT * FROM productos WHERE nombre LIKE '%' || :query || '%' OR descripcion LIKE '%' || :query || '%'")
+    @Query("""
+        SELECT * FROM productos 
+        WHERE nombre LIKE '%' || :query || '%' 
+        OR descripcion LIKE '%' || :query || '%'
+    """)
     fun buscarProductos(query: String): Flow<List<Producto>>
 
     @Delete
@@ -48,7 +52,7 @@ interface ProductoDao {
     @Query("UPDATE productos SET stock = :nuevoStock WHERE id = :id")
     suspend fun actualizarStock(id: Int, nuevoStock: Int)
 
-    // ✅ NUEVO: CONTAR PRODUCTOS EN LA TABLA
+    // ✅ Contar productos en la tabla (para saber si está vacía, por ejemplo)
     @Query("SELECT COUNT(*) FROM productos")
     suspend fun contarProductos(): Int
 }

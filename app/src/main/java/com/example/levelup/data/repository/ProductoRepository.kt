@@ -4,11 +4,14 @@ import com.example.levelup.data.dao.ProductoDao
 import com.example.levelup.data.model.Producto
 import kotlinx.coroutines.flow.Flow
 
-class ProductoRepository(private val productoDao: ProductoDao) {
+class ProductoRepository(
+    private val productoDao: ProductoDao
+) {
 
     suspend fun disminuirStock(codigo: String, cantidad: Int) {
         productoDao.disminuirStock(codigo, cantidad)
     }
+
     suspend fun insertarProducto(producto: Producto) {
         productoDao.insertarProducto(producto)
     }
@@ -45,6 +48,6 @@ class ProductoRepository(private val productoDao: ProductoDao) {
         productoDao.actualizarStock(id, nuevoStock)
     }
 
-    fun obtenerOfertas() = productoDao.obtenerPorCategoria("Ofertas")
-
+    fun obtenerOfertas(): Flow<List<Producto>> =
+        productoDao.obtenerPorCategoria("Ofertas")
 }

@@ -28,6 +28,8 @@ import com.example.levelup.viewmodel.CartViewModel
 import com.example.levelup.viewmodel.CartViewModelFactory
 import com.example.levelup.viewmodel.OffersViewModel
 import com.example.levelup.viewmodel.OffersViewModelFactory
+import com.example.levelup.viewmodel.ProductoViewModel
+import com.example.levelup.viewmodel.ProductoViewModelFactory
 import com.example.levelup.viewmodel.QrViewModel
 import kotlinx.coroutines.launch
 
@@ -50,6 +52,14 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    // ViewModel para productos (Room)
+    private val productoViewModel: ProductoViewModel by viewModels {
+        val db = ProductoDataBase.getDataBase(applicationContext)
+        ProductoViewModelFactory(
+            ProductoRepository(db.productoDao())
+        )
+    }
+
     private var hasCameraPermission by mutableStateOf(false)
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -68,8 +78,11 @@ class MainActivity : ComponentActivity() {
 
         val db = ProductoDataBase.getDataBase(applicationContext)
 
+        // Eliminar los productos antiguos y agregar solo si la tabla está vacía
         lifecycleScope.launch {
             try {
+                db.productoDao().eliminarTodos()  // Limpiar la tabla antes de insertar
+
                 val count = db.productoDao().contarProductos()
                 if (count == 0) {
                     db.productoDao().insertarProductos(
@@ -82,7 +95,6 @@ class MainActivity : ComponentActivity() {
                 e.printStackTrace()
             }
         }
-
 
         hasCameraPermission = CameraPermissionHelper.hasCameraPermission(this)
 
@@ -100,6 +112,7 @@ class MainActivity : ComponentActivity() {
                         qrViewModel = qrViewModel,
                         cartViewModel = cartViewModel,
                         offersViewModel = offersViewModel,
+                        productoViewModel = productoViewModel,
                         hasCameraPermission = hasCameraPermission,
                         onRequestPermission = {
                             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
