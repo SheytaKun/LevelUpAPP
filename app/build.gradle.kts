@@ -25,6 +25,16 @@ android {
         )
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\Users\\psnse\\level-up.jks")
+
+            storePassword = "123456"
+            keyAlias = "level"
+            keyPassword = "123456"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -32,6 +42,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -48,7 +60,7 @@ android {
         compose = true
         buildConfig = true
     }
-    
+
     packaging {
         resources {
             excludes += "META-INF/INDEX.LIST"
@@ -64,7 +76,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
-    
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -74,6 +86,19 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.livedata)
+
+    // TEST DEPENDENCIES (CONFIGURACIÓN CORRECTA Y LIMPIA)
+    // Kotest (solo estas 2 son necesarias)
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    // MockK
+    testImplementation("io.mockk:mockk:1.13.10")
+    // Coroutines Test
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    // AndroidX Test
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    // JUnit 5 (solo engine, Kotest usa JUnit 5)
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 
     // Icons
     implementation(libs.androidx.compose.material.icons.core)
@@ -86,7 +111,6 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
-
 
     // CameraX
     implementation(libs.androidx.camera.core)
@@ -117,4 +141,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform() // <<< NECESARIO
+    testLogging {
+        events("passed", "failed", "skipped")
+    }
 }

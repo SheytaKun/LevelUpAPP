@@ -11,13 +11,13 @@ object StaticOfferData {
 
     // Porcentajes de descuento de cada oferta
     val descuentos = mapOf(
-        "OF001" to 15, // 15% OFF
-        "OF002" to 20, // 20% OFF
-        "OF003" to 25, // 25% OFF
-        "OF004" to 25, // 25% OFF
-        "OF005" to 30, // 30% OFF
-        "OF006" to 20, // 20% OFF
-        "OF007" to 35  // 35% OFF
+        "OF001" to 15,
+        "OF002" to 20,
+        "OF003" to 25,
+        "OF004" to 25,
+        "OF005" to 30,
+        "OF006" to 20,
+        "OF007" to 35
     )
 
     val offers = listOf(
@@ -37,7 +37,7 @@ object StaticOfferData {
             descripcion = "Audífonos con micrófono y luces RGB.",
             precio = 24990,
             stock = 6,
-            imagenUrl = "https://i.imgur.com/UH5Od4E.jpeg"
+            imagenUrl = "https://i5.walmartimages.cl/asr/0c4d76f3-0c20-4470-a76e-929552419382.c59c3679af4915b1e18c9b44861729a3.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
         ),
         Producto(
             codigo = "OF003",
@@ -48,7 +48,7 @@ object StaticOfferData {
             stock = 3,
             imagenUrl = "https://i.imgur.com/0oEUZyA.jpeg"
         ),
-        // NUEVOS PRODUCTOS
+
         Producto(
             codigo = "OF004",
             categoria = "Ofertas",
