@@ -18,6 +18,7 @@ import com.example.levelup.ui.home.MuestraDatosScreen
 import com.example.levelup.ui.login.LoginScreen
 import com.example.levelup.ui.newproducts.NewProductsScreen
 import com.example.levelup.ui.nosotros.NosotrosScreen
+import com.example.levelup.ui.notifications.NotificationsScreen
 import com.example.levelup.ui.product.ProductDetailScreen
 import com.example.levelup.ui.profile.ProfileScreen
 import com.example.levelup.ui.profile.AccountSettingsScreen
@@ -66,6 +67,7 @@ fun AppNav(
     val nosotros         = "nosotros"
     val productForm      = "producto_form/{nombre}/{precio}"
     val qrScanner        = "qrScanner"
+    val notifications   =  "notifications"
 
     NavHost(navController = navController, startDestination = home) {
 
@@ -109,12 +111,12 @@ fun AppNav(
             CatalogScreen(
                 navController = navController,
                 categoria = categoria,
-                productoViewModel = productoViewModel,   // 👈 AHORA SÍ
+                productoViewModel = productoViewModel,
                 cartViewModel = cartViewModel
             )
         }
 
-        // ✅ RUTA DE OFERTAS
+        // RUTA DE OFERTAS
         composable(offers) {
             OffersScreen(
                 navController = navController,
@@ -132,7 +134,7 @@ fun AppNav(
             )
         }
 
-        // ✅ RUTA DE TOP COMPRAS
+        // RUTA DE TOP COMPRAS
         composable(topBuys) {
             TopBuysScreen(
                 navController = navController,
@@ -150,6 +152,12 @@ fun AppNav(
 
         composable(nosotros) {
             NosotrosScreen(
+                navController = navController
+            )
+        }
+
+        composable(notifications) {
+            NotificationsScreen(
                 navController = navController
             )
         }

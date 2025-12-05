@@ -52,7 +52,7 @@ interface ProductoDao {
     @Query("UPDATE productos SET stock = :nuevoStock WHERE id = :id")
     suspend fun actualizarStock(id: Int, nuevoStock: Int)
 
-    // ✅ Contar productos en la tabla (para saber si está vacía, por ejemplo)
+    // Contar productos en la tabla (para saber si está vacía, por ejemplo)
     @Query("SELECT COUNT(*) FROM productos")
     suspend fun contarProductos(): Int
 }

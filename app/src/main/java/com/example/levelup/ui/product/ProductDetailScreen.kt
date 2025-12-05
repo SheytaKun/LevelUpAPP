@@ -38,13 +38,13 @@ private val OnSurface     = Color.White
 @Composable
 fun ProductDetailScreen(
     navController: NavHostController,
-    codigo: String,
+    codigo: String,  // El código del producto viene de la navegación
     cartViewModel: CartViewModel,
     productoViewModel: ProductoViewModel   // Recibe ProductoViewModel
 ) {
     val moneda = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
-    // Obtiene el producto desde ROOM
+    // Obtiene el producto desde ROOM o desde los datos estáticos usando el código
     val productoState = produceState<Producto?>(initialValue = null, key1 = codigo) {
         value = productoViewModel.getProductoPorCodigo(codigo)
     }
@@ -118,7 +118,6 @@ fun ProductDetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-
                         // TARJETA CON IMAGEN DESDE ROOM
                         Card(
                             colors = CardDefaults.cardColors(containerColor = SurfaceDark),
@@ -157,7 +156,7 @@ fun ProductDetailScreen(
                                 color = OnSurface
                             )
                             Text(
-                                "Stock: ${product.stock}",   // Stock real desde Room
+                                "Stock: ${product.stock}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = SecondaryNeon
                             )
@@ -236,3 +235,4 @@ fun ProductDetailScreen(
         }
     }
 }
+

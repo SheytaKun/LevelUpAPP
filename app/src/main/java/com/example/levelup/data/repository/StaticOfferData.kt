@@ -46,7 +46,7 @@ object StaticOfferData {
             descripcion = "Modelo cómodo para empezar tu setup.",
             precio = 99990,
             stock = 3,
-            imagenUrl = "https://i.imgur.com/0oEUZyA.jpeg"
+            imagenUrl = "https://i5.walmartimages.cl/asr/6667d924-b5ad-471f-b2d7-1b32944f7260.e235f0945c82a2184aa0a2bf8f1d055a.jpeg?odnHeight=320&odnWidth=320&odnBg=FFFFFF"
         ),
 
         Producto(
@@ -56,7 +56,7 @@ object StaticOfferData {
             descripcion = "Sensor óptico preciso, 7 botones programables y luces RGB dinámicas.",
             precio = 14990,
             stock = 12,
-            imagenUrl = "https://i.imgur.com/fYwq3IU.jpeg"
+            imagenUrl = "https://prophonechile.cl/wp-content/uploads/2021/07/ratonnegro.png"
         ),
         Producto(
             codigo = "OF005",
@@ -65,7 +65,7 @@ object StaticOfferData {
             descripcion = "Switches mecánicos, retroiluminación LED y construcción reforzada.",
             precio = 21990,
             stock = 8,
-            imagenUrl = "https://i.imgur.com/PJOWb2Z.jpeg"
+            imagenUrl = "https://i5.walmartimages.cl/asr/00559b41-11b2-4e14-9d97-b11ba7c5b180.51ca7dd12bb1595a4c9d0ea8fe5f2b25.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
         ),
         Producto(
             codigo = "OF006",
@@ -74,7 +74,7 @@ object StaticOfferData {
             descripcion = "Pantalla FullHD con alta tasa de refresco ideal para juegos competitivos.",
             precio = 129990,
             stock = 4,
-            imagenUrl = "https://i.imgur.com/1pXWl3S.jpeg"
+            imagenUrl = "https://cl-cenco-pim-resizer.ecomm.cencosud.com/unsafe/adaptive-fit-in/3840x0/filters:quality(75)/prd-cl/product-medias/e978782a-30c3-43cc-9644-fdad5ae3b8d9/MKFSLK3HM8/MKFSLK3HM8-1/1701888730014-MKFSLK3HM8-1-1.jpg"
         ),
         Producto(
             codigo = "OF007",
@@ -83,7 +83,7 @@ object StaticOfferData {
             descripcion = "Diseño ergonómico, apoyabrazos ajustables y soporte lumbar.",
             precio = 159990,
             stock = 3,
-            imagenUrl = "https://i.imgur.com/eB1m4hz.jpeg"
+            imagenUrl = "https://i5.walmartimages.cl/asr/ace32e93-5ec4-4fe7-aa62-6b4907987adf.7a1469e31b090c3eb92634bf5ab04f38.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
         )
     )
 }

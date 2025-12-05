@@ -36,6 +36,20 @@ private val OnPrimary     = Color.White
 private val OnSecondary   = Color.Black
 private val OnSurface     = Color.White
 
+// ================================
+// ICONOS POR CATEGORÍA
+// ================================
+val categoryIcons: Map<String, ImageVector> = mapOf(
+    "Accesorios" to Icons.Default.Extension,               // Accesorios
+    "Computadores Gamers" to Icons.Default.Computer,       // PCs gamer
+    "Consolas" to Icons.Default.VideogameAsset,            // Consolas
+    "Juegos de Mesa" to Icons.Default.Casino,              // Juegos de mesa
+    "Mouse" to Icons.Default.Mouse,                        // Mouse
+    "Mousepad" to Icons.Default.Texture,                   // Mousepad
+    "Poleras Personalizadas" to Icons.Default.Checkroom,   // Poleras
+    "Sillas Gamers" to Icons.Default.Chair                 // Sillas gamer
+)
+
 @Composable
 fun DrawerMenu(
     username: String,
@@ -156,9 +170,10 @@ fun DrawerMenu(
             }
 
             categories.forEach { cat ->
+                val icon = categoryIcons[cat] ?: Icons.Default.Category  // Ícono por defecto si no está en el mapa
                 DrawerItemGamer(
                     label = cat,
-                    icon = Icons.Default.Category
+                    icon = icon
                 ) {
                     navController.navigate("catalogo?categoria=${Uri.encode(cat)}") {
                         launchSingleTop = true
