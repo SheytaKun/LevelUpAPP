@@ -36,7 +36,6 @@ class OrderRepository(
                 region = shippingInfo.region,
                 postalCode = shippingInfo.postalCode,
                 contactEmail = shippingInfo.contactEmail,
-                deliveryInstructions = shippingInfo.deliveryInstructions,
                 transactionCode = transactionCode
             )
 
@@ -88,8 +87,7 @@ data class ShippingInfo(
     val city: String,
     val region: String,
     val postalCode: String,
-    val contactEmail: String,
-    val deliveryInstructions: String
+    val contactEmail: String
 )
 
 data class OrderItemDto(

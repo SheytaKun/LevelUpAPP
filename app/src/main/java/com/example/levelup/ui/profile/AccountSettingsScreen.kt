@@ -65,7 +65,6 @@ fun AccountSettingsScreen(
         }
     }
 
-    // 🔹 Nombre limpio para mostrar (sin "Gamer Pro")
     val safeName = remember(state.name, emailFromSession) {
         when {
             state.name.isNotBlank() && state.name != "Gamer Pro" -> state.name
@@ -191,20 +190,6 @@ fun AccountSettingsScreen(
                         enabled = false,
                         leadingIcon = {
                             Icon(Icons.Default.Email, contentDescription = null)
-                        },
-                        colors = textFieldColors
-                    )
-
-                    // Teléfono
-                    OutlinedTextField(
-                        value = state.phone,
-                        onValueChange = vm::onPhoneChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Teléfono") },
-                        placeholder = { Text("Ej: +56 9 1234 5678") },
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(Icons.Default.Phone, contentDescription = null)
                         },
                         colors = textFieldColors
                     )

@@ -70,7 +70,6 @@ fun CheckoutScreen(
     var region by remember { mutableStateOf("") }
     var postalCode by remember { mutableStateOf("") }
     var contactEmail by remember { mutableStateOf("") }
-    var deliveryInstructions by remember { mutableStateOf("") }
 
     // Effect to populate fields if user is logged in
     LaunchedEffect(Unit) {
@@ -175,33 +174,13 @@ fun CheckoutScreen(
                 CheckoutTextField(value = postalCode, onValueChange = { postalCode = it }, label = "Código Postal", keyboardType = KeyboardType.Number)
                 CheckoutTextField(value = contactEmail, onValueChange = { contactEmail = it }, label = "Correo Electrónico", keyboardType = KeyboardType.Email)
 
-                OutlinedTextField(
-                    value = deliveryInstructions,
-                    onValueChange = { deliveryInstructions = it },
-                    label = { Text("Instrucciones de entrega (opcional)") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(100.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = SecondaryNeon,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedLabelColor = SecondaryNeon,
-                        unfocusedLabelColor = Color.Gray,
-                        focusedTextColor = OnSurface,
-                        unfocusedTextColor = OnSurface,
-                        cursorColor = SecondaryNeon
-                    ),
-                    maxLines = 4
-                )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
                         if (validateForm(fullName, address, region, city, commune, postalCode, contactEmail)) {
                             val shippingInfo = ShippingInfo(
-                                fullName, address, commune, city, region, postalCode, contactEmail, deliveryInstructions
+                                fullName, address, commune, city, region, postalCode, contactEmail
                             )
                             orderViewModel.createOrder(shippingInfo, cartItems)
                         }

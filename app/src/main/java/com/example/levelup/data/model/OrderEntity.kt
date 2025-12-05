@@ -19,7 +19,6 @@ data class OrderEntity(
     val region: String,
     val postalCode: String,
     val contactEmail: String,
-    val deliveryInstructions: String,
     
     val transactionCode: String
 )
